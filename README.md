@@ -28,8 +28,8 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
 1. **Clone das Repository:**
 
     ```bash
-    git clone https://github.com/dein-benutzername/2048AI.git
-    cd 2048AI
+    git clone https://github.com/w0lfzk1nd-school/2048AI-Webgui.git
+    cd 2048AI-Webgui
     ```
 
 2. **Erstelle das Verzeichnis `.devcontainer` und füge die notwendigen Dateien hinzu:**
