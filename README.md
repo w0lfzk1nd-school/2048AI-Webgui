@@ -7,13 +7,19 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 - [2048AI Dev Container](#2048ai-dev-container)
   - [Inhaltsverzeichnis](#inhaltsverzeichnis)
   - [Voraussetzungen](#voraussetzungen)
-  - [Einrichtung](#einrichtung)
+  - [Ablauf der Einrichtung](#ablauf-der-einrichtung)
   - [Verzeichnisstruktur](#verzeichnisstruktur)
   - [Dev-Container Konfiguration](#dev-container-konfiguration)
   - [Nutzung des Dev-Containers](#nutzung-des-dev-containers)
   - [Ports](#ports)
   - [VSCode Erweiterungen](#vscode-erweiterungen)
   - [Bekannte Probleme](#bekannte-probleme)
+- [**2048 AI Projekt**](#2048-ai-projekt)
+  - [**Struktur**](#struktur)
+    - [**WebGui**](#webgui)
+    - [**Keras Modell Training**](#keras-modell-training)
+- [Zusammenfassung](#zusammenfassung)
+  
 
 ## Voraussetzungen
 
@@ -22,8 +28,11 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
 - [Docker](https://www.docker.com/)
 - [Visual Studio Code (VSCode)](https://code.visualstudio.com/)
 - [Dev Containers Extension für VSCode](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+- (optional) [Git](https://git-scm.com/downloads)
 
-## Einrichtung
+## Ablauf der Einrichtung
+
+*Dies muss in dieser Repo nicht nochmals wiederholt werden*
 
 1. **Clone das Repository:**
 
@@ -32,7 +41,7 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
     cd 2048AI-Webgui
     ```
 
-2. **Erstelle das Verzeichnis `.devcontainer` und füge die notwendigen Dateien hinzu:**
+2. **Erstelle das Verzeichnis `.devcontainer`:**
 
     ```bash
     mkdir .devcontainer
@@ -68,17 +77,21 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
     numpy
     tensorflow
     flask
+    questionary
+    matplotlib
     ```
 
 ## Verzeichnisstruktur
 
 Stelle sicher, dass dein Projektverzeichnis wie folgt aussieht:
 
+```
 2048AI/
 ├── .devcontainer/
-│ ├── devcontainer.json
+│  ├── devcontainer.json
 ├── requirements.txt
 └── (andere Projektdateien)
+```
 
 
 ## Dev-Container Konfiguration
@@ -121,8 +134,69 @@ Falls der Fehler "workspace does not exist" auftritt, überprüfe die folgenden 
 - **Pfadüberprüfung**: Stelle sicher, dass der Pfad zum Projektverzeichnis korrekt ist. Verwende absolute Pfade, um mögliche Fehler zu vermeiden.
 - **Berechtigungen**: Stelle sicher, dass du die notwendigen Berechtigungen hast, um auf das Verzeichnis zuzugreifen und es zu mounten.
 
-Bei weiteren Problemen oder Fragen, kontaktiere bitte den Projektmaintainer.
+Bei weiteren Problemen oder Fragen, essen sie die Packungsbeilage und sagen sie ihrem Arzt er sei Apotheker.
 
 ---
 
 Viel Spaß beim Entwickeln mit deinem 2048AI Dev-Container!
+
+---
+
+# **2048 AI Projekt**
+
+Vor ein paar Jahren habe ich das simple Handyspiel entdeckt und war von der Komplexität begeistert. Nun, ein paar Jahre später, hab ich mich mehr mit AI oder generell neuronalen Netzwerken beschäftigt und beherrschte mehrere Programmiersprachen, darunter Python.
+
+Dieses Projekt umfasst folgendes:
+- DevContainer.
+- WebGui für Trainingdata erfassung.
+- Simples Konsoleninterface um ein Keras Modell mit *Tensorflow* zu trainieren und die gesammelten Daten in ein brauchbares Dataset umformatieren.
+
+**Das Projekt ist noch in der Entwicklungsphase!**
+
+## **Struktur**
+
+- [2048 AI Projekt](#2048ai-ai-projekt)
+  - [Struktur](#struktur)
+  - [WebGui Data Collecter](#webgui)
+  - [Keras Modell Trainer](#keras-modell-training)
+
+### **WebGui**
+
+![WebGui](2048ai_webgui.PNG "WebGui")
+
+Das WebGui wurde entwickelt, um Spielzüge und Spielzustände von echten Menschen zu sammeln, welche das Spiel spielen
+
+**Additional:** Es gibt die Option, welche einen **[Monte Carlo Algorithm](https://de.wikipedia.org/wiki/Monte-Carlo-Simulation)** verwendet um für alle 4 Richtungen ca 10'000 Züge *(400 pro Zug selbst)* schätzt und die gewonnenen Punkte zurückgibt. Anhand dessen lässt sich festlegen welche Richtung für das jetztige Spielfeld ideal ist.
+
+---
+
+### **Keras Modell Training**
+
+Das Training des **[Keras AI Modell](https://de.wikipedia.org/wiki/Keras)** läuft in 4 Schritten ab:
+
+- **Dataset sammeln**
+  - Sammle Daten im Internet, lasse Freunde spielen oder schreibe Programme.
+
+- **Dataset vorbereiten**
+  - Die gesammelten Daten müssen nun noch vorbereitet werden, dies beinhält:
+    - *Duplikate aussortieren* **10min**
+    - *Augmentieren (Spiegeln, drehen)* **20min**
+    - *Mithilfe des **Monte Carlo Algorithmus** für jedes Board den besten Zug ermitteln lassen.* **6 Stunden**
+
+- **Modell mit Dataset trainieren**
+  - Nun kann das Modell mit den gesammelten und vorbereiteten Daten trainiert werden. In diesem Prozess werden alle Spielzustände, mit dem vom Algorithmus errechneten besten Zug, an das Modell in zufälliger Reihenfolge gezeigt.
+
+- **Modell selbst trainieren lassen und verfeinern.**
+  - In diesem Schritt, wird das Modell *24 bis 48 Stunden* alleine spielen und bei Problensituationen (wie einem vollen Board) wird dieses mit genaueren Spieldaten zu diesem Problem nachtrainiert.
+
+---
+
+# Zusammenfassung
+
+Im grossen und ganzen wurde das Potential von **AI** im Spiel *2048* bereits ausgeschöpft. Es gibt bereits Modelle, welche das Spiel bis zum letzt möglichen Zug gespielt und somit den bestmöglichen Punktestand erreicht haben.
+
+Jedoch finde ich es für mich selbst eine sehr tolle und interessante Aufgabe und Erfahrung, sich mit solch einem Thema auseinander zu setzen.
+
+Ebenso geht an dieser Stelle ein **riesen** Dankeschön an meine Ookami Chatbot Community, welche innerhalt von 3 Tagen fast 100'000 Spielzüge gespielt haben.
+
+*Dieses Projekt ist noch nicht abgeschlossen und wird daher in der Zukunft geupdatet werden.*
