@@ -4,3 +4,4 @@
 logs/*
 geckodriver.log
 .venv/
+*/.env

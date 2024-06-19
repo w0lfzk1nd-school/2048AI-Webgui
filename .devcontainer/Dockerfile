@@ -6,11 +6,15 @@ WORKDIR /workspace
 
 # Kopieren der requirements-Datei und Installieren der Abhängigkeiten
 COPY requirements.txt /workspace/
+COPY .env /workspace/.env
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Kopieren des Ordners "2048AI-Webgui" in das Arbeitsverzeichnis im Container
-#COPY ../2048AI-Webgui /workspace/2048AI-Webgui
+# Umgebungsvariablen setzen
+ENV MYSQL_HOST=${MYSQL_HOST}
+ENV MYSQL_USER=${MYSQL_USER}
+ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
+ENV MYSQL_DB=${MYSQL_DB}
 
 # Offene Ports für Flask
 EXPOSE 8282
