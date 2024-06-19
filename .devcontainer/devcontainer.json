@@ -3,7 +3,8 @@
 {
     "name": "2048AI Dev Container",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-    "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bookworm",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
     
     // Set the default working directory
     "workspaceFolder": "/workspace",
@@ -12,7 +13,7 @@
     // "features": {},
 
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
-    "forwardPorts": [8282, 8283],
+    "forwardPorts": [8282, 8283, 3307],
 
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/requirements.txt",
@@ -28,6 +29,5 @@
                 "python.pythonPath": "/usr/local/bin/python"
             }
         }
-    },
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    }
 }

@@ -1,0 +1,12 @@
+MYSQL_HOST:
+  description: "The hostname of the MySQL server"
+  required: true
+MYSQL_USER:
+  description: "The username for the MySQL server"
+  required: true
+MYSQL_PASSWORD:
+  description: "The password for the MySQL server"
+  required: true
+MYSQL_DB:
+  description: "The database name for the MySQL server"
+  required: true
