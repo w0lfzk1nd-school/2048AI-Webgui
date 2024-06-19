@@ -5,8 +5,9 @@ FROM python:3.11-bookworm
 WORKDIR /workspace
 
 # Kopieren der requirements-Datei und Installieren der Abhängigkeiten
-COPY requirements.txt /workspace/
+COPY requirements.txt /workspace/requirements.txt
 COPY .env /workspace/.env
+#COPY ../* /workspace/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
@@ -20,6 +21,9 @@ ENV MYSQL_DB=${MYSQL_DB}
 EXPOSE 8282
 EXPOSE 8283
 EXPOSE 3307
+EXPOSE 8085
 
-# Startbefehl für die App (anpassen, falls notwendig)
-#CMD ["python", "/workspace/2048AI-Webgui/webgui/app.py"]
+# Startbefehl
+# tail -f /dev/null
+CMD ["tail", "-f", "/dev/null"]
+# CMD ["python", "/workspace/webgui/app.py"]

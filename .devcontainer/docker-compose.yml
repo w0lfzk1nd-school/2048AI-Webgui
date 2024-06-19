@@ -1,12 +1,13 @@
 version: '3.8'
 
 services:
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../:/workspace
+      - ..:/workspace
     ports:
       - 8282:8282
       - 8283:8283
@@ -20,7 +21,7 @@ services:
     working_dir: /workspace
 
   mysql:
-    image: mysql:8.0
+    image: mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
@@ -30,6 +31,15 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  tool:
+    image: phpmyadmin
+    ports:
+      - "8085:80"
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on: 
+      - mysql
 
 volumes:
   mysql-data:
