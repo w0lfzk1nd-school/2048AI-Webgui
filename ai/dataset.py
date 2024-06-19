@@ -8,8 +8,10 @@ from time import sleep
 from game.game_console import print_board
 from game.game_engine import Game2048
 from ai.ollama import OllamaSolve
+from ai.monte_carlo import monte_predict
 from ai.environment import Environment
-from ai.train import init_training_info
+import multiprocessing as mp
+from functools import partial
 from ai.model import create_model
 from tensorflow.keras.models import load_model
 from tensorflow.keras.layers import Dense, Flatten
@@ -23,6 +25,34 @@ from utils.utilities import (
     form_time,
     log,
 )
+
+
+def default_converter(o):
+    if isinstance(o, np.integer):
+        return int(o)
+    elif isinstance(o, np.floating):
+        return float(o)
+    elif isinstance(o, np.ndarray):
+        return o.tolist()
+    else:
+        return str(o)
+
+
+def has_valid_move(board):
+    for row in range(4):
+        for col in range(4):
+            if board[row][col] == 0:
+                return True
+
+    for row in range(4):
+        for col in range(4):
+            current_value = board[row][col]
+            if col < 3 and board[row][col + 1] == current_value:
+                return True
+            if row < 3 and board[row + 1][col] == current_value:
+                return True
+    return False
+
 
 def is_single_number(output):
     try:
@@ -41,7 +71,8 @@ def game_console(num_games=1):
         print(f">> Game Key: {game_key}")
         choice = questionary.select(
             "Choose an option:",
-            choices=["Play the game yourself", "Generate random game boards", "Exit"],
+            choices=["Play the game yourself",
+                     "Generate random game boards", "Exit"],
         ).ask()
 
         if choice == "Play the game yourself":
@@ -90,7 +121,8 @@ def play_game(game_data, training_info):
         if env.game.bestblock > bestscore:
             bestscore = env.game.bestblock
 
-        env.render({"high": highscore, "best": bestscore}, training_info["traintime"])
+        env.render({"high": highscore, "best": bestscore},
+                   training_info["traintime"])
 
         move = input("Enter move (w, a, s, d): ").strip().lower()
         if not move:
@@ -155,7 +187,7 @@ def setup_dataset():
         model_key = gen_key()
         game_data = []
         json_path = f"datasets/{model_key}-data.json"
-        training_info = []#init_dataset_info(json_path)
+        training_info = []  # init_dataset_info(json_path)
 
     return model_key, game_data, training_info
 
@@ -180,7 +212,8 @@ def update_training_info(training_info, steps, score):
     training_info["total_train_steps"] += steps
     training_info["total_games"] += 1
     training_info["avg_points"] = (
-        training_info["avg_points"] * (training_info["total_games"] - 1) + score
+        training_info["avg_points"] *
+        (training_info["total_games"] - 1) + score
     ) / training_info["total_games"]
     training_info["highscore"] = highscore
 
@@ -196,7 +229,8 @@ def generate_random_boards(num_boards):
             if action == "exit" or not action:
                 return game_data
             elif action.lower() in ["w", "a", "s", "d"]:
-                action = ["w", "a", "s", "d"].index(action)  # Convert action to number
+                action = ["w", "a", "s", "d"].index(
+                    action)  # Convert action to number
                 if isinstance(state, np.ndarray):
                     board_list = state.tolist()
                 else:
@@ -246,19 +280,20 @@ def create_games_dataset(num_games=1000, max_moves=500, filename="gen_games.json
 >> Current Score: [{score}] | Block: {highest_block}
 <- - - - - - - - - - - - ->
 """
-            print(info_txt)
-            log(info_txt)
+
             if use_ollama:
                 print(f">> Ollama solving Board")
                 for row in state:
                     print("+----" * len(row) + "+")
                     log("+----" * len(row) + "+")
                     print(
-                        "|".join(f"{num:4d}" if num > 0 else "    " for num in row)
+                        "|".join(f"{num:4d}" if num >
+                                 0 else "    " for num in row)
                         + "|"
                     )
                     log(
-                        "|".join(f"{num:4d}" if num > 0 else "    " for num in row)
+                        "|".join(f"{num:4d}" if num >
+                                 0 else "    " for num in row)
                         + "|"
                     )
                 print("+----" * len(row) + "+")
@@ -375,7 +410,8 @@ def generate_valid_board():
         board = np.zeros((4, 4), dtype=int)
         for i in range(4):
             for j in range(4):
-                board[i][j] = random.choice([2, 4, 8, 16, 32, 64, 128, 256, 512, 1024])
+                board[i][j] = random.choice(
+                    [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024])
 
         num_pairs = 2
         while num_pairs > 0:
@@ -405,7 +441,7 @@ def generate_valid_board():
 
 def save_dataset(dataset, filename):
     with open(f"datasets/{filename}", "w") as f:
-        json.dump(dataset, f)
+        json.dump(dataset, f, default=default_converter)
 
 
 def load_dataset(filename):
@@ -416,7 +452,7 @@ def load_dataset(filename):
         with open(f"datasets/{cleankey}-data.json", "r") as f:
             training_info = json.load(f)
     else:
-        training_info = [] #init_training_info(f"datasets/{cleankey}-data.json")
+        training_info = []
     return cleankey, dataset, training_info
 
 
@@ -432,17 +468,21 @@ def augment_data(board, action):
     # Original
     augmented_data.append((board, action))
 
-    if action == 1 or action == 3:
-        # Flip Left-Right
-        flipped_lr_board = np.fliplr(board)
-        flipped_lr_action = 3 if action == 1 else 1 if action == 3 else action
-        augmented_data.append((flipped_lr_board, flipped_lr_action))
+    # Flip Left-Right
+    flipped_lr_board = np.fliplr(board)
+    flipped_lr_action = 3 if action == 1 else 1 if action == 3 else action
+    augmented_data.append((flipped_lr_board, flipped_lr_action))
 
-    if action == 0 or action == 2:
-        # Flip Up-Down
-        flipped_ud_board = np.flipud(board)
-        flipped_ud_action = 2 if action == 0 else 0 if action == 2 else action
-        augmented_data.append((flipped_ud_board, flipped_ud_action))
+    # Flip Up-Down
+    flipped_ud_board = np.flipud(board)
+    flipped_ud_action = 2 if action == 0 else 0 if action == 2 else action
+    augmented_data.append((flipped_ud_board, flipped_ud_action))
+
+    if isinstance(action, str):
+        try:
+            action = int(action)
+        except:
+            action = 0
 
     # Rotations
     for k in range(1, 4):
@@ -459,6 +499,7 @@ def generate_augmented_dataset(dataset):
         augmented_dataset.extend(augment_data(board, action))
     return augmented_dataset
 
+
 def user_finetune_augemntation(augmented_set):
     aug_data_len = len(augmented_set)
     input(f">> Augmented Dataset has len: {aug_data_len}")
@@ -472,7 +513,9 @@ def user_finetune_augemntation(augmented_set):
             print_board(board)
             print(f"\n>> Action: {action} | {form_action}")
             while True:
-                action = questionary.text("Enter new action (W, A, S, D) or ENTER to keep value or 'exit' to return:").ask()
+                action = questionary.text(
+                    "Enter new action (W, A, S, D) or ENTER to keep value or 'exit' to return:"
+                ).ask()
                 if action == "exit":
                     return new_augmented
 
@@ -493,7 +536,7 @@ def user_finetune_augemntation(augmented_set):
     except Exception as e:
         print(f"Error: {e}")
         return new_augmented
-            
+
 
 def train_model_with_dataset(model, dataset, epochs=10, batch_size=32):
     if len(dataset) == 3:
@@ -514,15 +557,23 @@ def train_model_with_dataset(model, dataset, epochs=10, batch_size=32):
     if questionary.confirm("Do you want to train the augmented dataset too?").ask():
         # -- Generate and preprocess the augmented dataset
         augmented_dataset = generate_augmented_dataset(dataset_data)
-        augmented_states, augmented_actions = preprocess_dataset(augmented_dataset)
+        augmented_states, augmented_actions = preprocess_dataset(
+            augmented_dataset)
 
         # -- One-hot encode augmented actions
         augmented_actions_one_hot = np.zeros((augmented_actions.size, 4))
-        augmented_actions_one_hot[np.arange(augmented_actions.size), augmented_actions] = 1
+        augmented_actions_one_hot[
+            np.arange(augmented_actions.size), augmented_actions
+        ] = 1
 
         # -- Train the model with the augmented dataset
         print("Training with augmented dataset...")
-        model.fit(augmented_states, augmented_actions_one_hot, epochs=epochs, batch_size=batch_size)
+        model.fit(
+            augmented_states,
+            augmented_actions_one_hot,
+            epochs=epochs,
+            batch_size=batch_size,
+        )
 
 
 def create_shuffled_copy():
@@ -539,13 +590,46 @@ def create_shuffled_copy():
     print(f"Shuffled Dataset saved to: {shuffled_name}")
 
 
+def split_dataset():
+    chosen_dataset = select_dataset()
+    key, dataset, traininginfo = load_dataset(chosen_dataset)
+
+    print(f"Original Dataset Size: {len(dataset)}")
+    num_parts = int(
+        input("Enter the number of parts to split the dataset into (1-10): ")
+    )
+
+    if num_parts <= 0 or num_parts > 10:
+        print("Number of parts should be between 1 and 10.")
+        return
+
+    part_size = len(dataset) // num_parts
+    remainder = len(dataset) % num_parts
+
+    split_datasets = []
+    start_index = 0
+
+    for part in range(num_parts):
+        part_length = part_size + 1 if part < remainder else part_size
+        split_datasets.append(dataset[start_index: start_index + part_length])
+        start_index += part_length
+
+    for i, split_data in enumerate(split_datasets):
+        part_name = f"{key}_part{i+1}_{num_parts}_split.json"
+        save_dataset(split_data, part_name)
+        print(f"Split Dataset part {i+1} saved to: {part_name}")
+
+    print(f"Dataset split into {num_parts} parts.")
+
+
 def resize_dataset():
     chosen_dataset = select_dataset()
     key, dataset, traininginfo = load_dataset(chosen_dataset)
 
     print(f"Original Dataset Size: {len(dataset)}")
     new_size = int(
-        input(f"Enter the new size of the dataset: (between 1 and {len(dataset)}):")
+        input(
+            f"Enter the new size of the dataset: (between 1 and {len(dataset)}):")
     )
     print(f"{new_size}, {type(new_size)}, {len(dataset)}, {type(len(dataset))}")
 
@@ -587,7 +671,7 @@ def merge_datasets():
     print("Select the second dataset to merge:")
     second_dataset = select_dataset()
     key2, dataset2, traininginfo2 = load_dataset(second_dataset)
-    
+
     print(f">> len1: {len(dataset1)} | len2 {len(dataset2)}")
     merged_dataset = dataset1 + dataset2
     print(f">> Total len: {len(merged_dataset)}")
@@ -599,48 +683,132 @@ def merge_datasets():
 
     print(f"Merged Dataset saved to: {merged_name}")
 
+
 def merge_and_sort_datasets():
     print("Select datasets to merge and sort (select at least two):")
     datasets = []
-    
+
     while True:
         dataset_path = select_dataset()
         if dataset_path:
             datasets.append(dataset_path)
-            more = questionary.confirm("Do you want to add another dataset?").ask()
+            more = questionary.confirm(
+                "Do you want to add another dataset?").ask()
             if not more:
                 break
         else:
             break
-    
+
     all_data = []
     keys = []
-    
+
     for dataset in datasets:
-        key, data, _ = load_dataset(dataset)
-        all_data.extend(data)
-        keys.append(key)
-    
+        try:
+            key, data, _ = load_dataset(dataset)
+            all_data.extend(data)
+            if isinstance(key, str):
+                try:
+                    key = int(key)
+                except ValueError:
+                    key = 0
+            keys.append(key)
+        except (json.JSONDecodeError, ValueError) as e:
+            print(f"Error loading {dataset}: {e}")
+            continue
+
     print(f">> Total initial len: {len(all_data)}")
     input("Confirm")
-    
-    # Remove duplicates
+
     unique_data = []
     seen = set()
     sort_key = gen_key()
     for item in all_data:
-        item_tuple = (tuple(map(tuple, item[0])), item[1])
-        if item_tuple not in seen:
-            seen.add(item_tuple)
-            unique_data.append(item)
-    
+        if has_valid_move(item[0]):
+            item_tuple = tuple(map(tuple, item[0]))
+            if item_tuple not in seen:
+                seen.add(item_tuple)
+                unique_data.append(item)
+
     print(f">> Total unique len: {len(unique_data)}")
     input("Confirm")
-    
+
     merged_name = sort_key + "_sorted.json"
     save_dataset(unique_data, merged_name)
-    
+
     print(f"Merged and Sorted Dataset saved to: {merged_name}")
+
+
+def merge_and_sort_all_datasets_in_folder():
+    datasets = [f for f in os.listdir("datasets/") if f.endswith(".json")]
+
+    if len(datasets) < 2:
+        print("Not enough datasets to merge and sort.")
+        return
+
+    all_data = []
+    keys = []
+
+    print(f">> Total files loaded: {len(datasets)}")
+
+    for dataset in datasets:
+        try:
+            key, data, _ = load_dataset(dataset)
+            all_data.extend(data)
+            if isinstance(key, str):
+                try:
+                    key = int(key)
+                except ValueError:
+                    key = 0
+            keys.append(key)
+        except (json.JSONDecodeError, ValueError) as e:
+            print(f"Error loading {dataset}: {e}")
+            continue
+
+    print(f">> Total initial len: {len(all_data)}")
+    input("Confirm length and start sorting!")
+
+    unique_data = []
+    seen = set()
+    for item in all_data:
+        if has_valid_move(item[0]):
+            item_tuple = tuple(map(tuple, item[0]))
+            if item_tuple not in seen:
+                seen.add(item_tuple)
+                unique_data.append(item)
+
+    print(f">> Total unique len: {len(unique_data)}")
+
+    sort_key = f"ALL_{gen_key()}"
+    merged_name = f"{sort_key}_sorted.json"
+    save_dataset(unique_data, merged_name)
+
+    print(f"Merged and Sorted Dataset saved to: {merged_name}")
+
+
+def predict_dataset():
+    selected_dataset = select_dataset()
+    dataset_data = load_dataset(selected_dataset)
+    key, dataset, training_info = dataset_data
+
+    new_dataset = []
+    completed = 0
+    data_len = len(dataset)
+    print(f">> Loaded {len(dataset)} Moves. Start predicting")
+
+    for move in dataset:
+        board = move[0]
+        print("- - - - - - - - - - - - - - - -")
+        print(f">> | Board {completed} / {data_len}")
+        print_board(board)
+        predicted_action = monte_predict(board, 500, 10)
+        print(predicted_action)
+        new_dataset.append([board, predicted_action['predicted']])
+        print("- - - - - - - - - - - - - - - -")
+        completed += 1
+
+    print(">> Completed Predicting")
+    save_dataset(new_dataset, f"Predicted_{key}_training.json")
+
 
 def main():
 
@@ -650,12 +818,15 @@ def main():
             choices=[
                 "Show Dataset Size",
                 "Play and Create Datasets",
-                "User finetune Dataset",
-                "Augment Dataset",
-                "Resize Dataset",
+                "Predict Dataset",
                 "Merge Datasets",
                 "Merge and Sort Datasets",
-                "Shuffled Copy Dataset",
+                "Merge and Sort all Datasets",
+                "User finetune Dataset",
+                "Split Dataset",
+                "Augment Dataset",
+                "Resize Dataset",
+                "Shuffle Dataset",
                 "Create Games Dataset",
                 "Create Random Dataset",
                 "Train existing Model with Dataset",
@@ -705,13 +876,17 @@ def main():
                 print(f"No Imput, going back. . .")
                 continue
             dataset = load_dataset(dataset_path)
-            num_epochs = questionary.text("Number of epochs:", default="30").ask()
-            batch_size = questionary.select("Select Batch-Size (Default: 32):", ["32", "64", "128"]).ask()
+            num_epochs = questionary.text(
+                "Number of epochs:", default="30").ask()
+            batch_size = questionary.select(
+                "Select Batch-Size (Default: 32):", ["32", "64", "128"]
+            ).ask()
             print(num_epochs, batch_size)
             if not batch_size or not num_epochs:
                 print("No no no, you have to select something.")
                 input("Press any key to sell your soul.")
-            train_model_with_dataset(model, dataset, int(num_epochs), int(batch_size))
+            train_model_with_dataset(
+                model, dataset, int(num_epochs), int(batch_size))
             model.save(f"saves/{model_path}")
             print(f"Model trained and saved to saves/{model_path}")
 
@@ -722,12 +897,16 @@ def main():
                 print(f"No Imput, going back. . .")
                 continue
             modelkey, dataset, training_info = load_dataset(dataset_path)
-            num_epochs = questionary.text("Number of epochs:", default="30").ask()
-            batch_size = questionary.select("Select Batch-Size (Default: 32):", ["32", "64", "128"]).ask()
+            num_epochs = questionary.text(
+                "Number of epochs:", default="30").ask()
+            batch_size = questionary.select(
+                "Select Batch-Size (Default: 32):", ["32", "64", "128"]
+            ).ask()
             if not batch_size or not num_epochs:
                 print("No no no, you have to select something.")
                 input("Press any key to sell your soul.")
-            train_model_with_dataset(model, dataset, int(num_epochs), int(batch_size))
+            train_model_with_dataset(
+                model, dataset, int(num_epochs), int(batch_size))
             model_key = gen_key()
             model.save(f"saves/trained/{model_key}_Model.h5")
             print(f"New model trained and saved to saves/{model_key}_Model.h5")
@@ -742,7 +921,8 @@ def main():
         elif choice == "Augment Dataset":
             chosen_dataset = select_dataset()
             if chosen_dataset:
-                modelkey, aug_dataset, training_info = load_dataset(chosen_dataset)
+                modelkey, aug_dataset, training_info = load_dataset(
+                    chosen_dataset)
                 augmented_dataset = generate_augmented_dataset(aug_dataset)
                 new_augmented_dataset = []
 
@@ -750,23 +930,26 @@ def main():
                     if isinstance(turn[0], np.ndarray):
                         new_turn = (turn[0].tolist(),) + turn[1:]
                     else:
-                        new_turn = ([
-                            row.tolist() if isinstance(row, np.ndarray) else row
-                            for row in turn[0]
-                        ],) + turn[1:]
+                        new_turn = (
+                            [
+                                row.tolist() if isinstance(row, np.ndarray) else row
+                                for row in turn[0]
+                            ],
+                        ) + turn[1:]
                     new_augmented_dataset.append(new_turn)
 
                 print(f">> Total len: {len(new_augmented_dataset)}")
                 augmented_name = f"{modelkey}_augmented.json"
                 save_dataset(new_augmented_dataset, augmented_name)
-                
+
         elif choice == "User finetune Dataset":
             chosen_dataset = select_dataset()
             if chosen_dataset:
-                modelkey, aug_dataset, training_info = load_dataset(chosen_dataset)
+                modelkey, aug_dataset, training_info = load_dataset(
+                    chosen_dataset)
                 finetuned_dataset = user_finetune_augemntation(aug_dataset)
                 print(f">> Total len: {len(finetuned_dataset)}")
-                
+
                 if questionary.confirm("Do you want to save this Model?"):
                     finetuned_name = f"{modelkey}_finetune_augmented.json"
                     save_dataset(finetuned_dataset, finetuned_name)
@@ -780,12 +963,20 @@ def main():
         elif choice == "Merge and Sort Datasets":
             merge_and_sort_datasets()
 
+        elif choice == "Merge and Sort all Datasets":
+            merge_and_sort_all_datasets_in_folder()
+
         elif choice == "Create Dataset while playing":
             game_console()
-            
-        elif choice == "Shuffled Copy Dataset":
+
+        elif choice == "Shuffle Dataset":
             create_shuffled_copy()
 
+        elif choice == "Split Dataset":
+            split_dataset()
+
+        elif choice == "Predict Dataset":
+            predict_dataset()
 
         elif choice == "Exit" or not choice:
             return

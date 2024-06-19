@@ -62,6 +62,7 @@ def select_dataset(path="datasets/"):
         if f.endswith(
             (
                 "hooman_game.json",
+                "split.json",
                 "random_boards.json",
                 "gen_random.json",
                 "gen_games.json",
@@ -117,6 +118,7 @@ def get_clean_key(file_path):
     remove_parts = [
         "_hooman_game.json",
         "_random_boards.json",
+        "_split.json",
         "_gen_games.json",
         "_gen_random.json",
         "_merged.json",

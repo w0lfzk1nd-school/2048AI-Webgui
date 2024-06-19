@@ -1,1 +1,6 @@
-2048ai_webgui.PNG
+2048ai_webgui.png
+*/__pycache__/*
+*/logs/*
+logs/*
+geckodriver.log
+.venv/

@@ -112,7 +112,7 @@ def random_move(board):
 
 
 # Improved algo_choose_action function using Monte-Carlo Tree Search
-def monte_predict(state, searches_per_move=400, search_length=35):
+def monte_predict(state, searches_per_move=500, search_length=10):
     first_moves = [move_up, move_left, move_down, move_right]
     scores = np.zeros(4)
     old_state = state.copy()
@@ -149,7 +149,7 @@ def monte_predict(state, searches_per_move=400, search_length=35):
         if not is_valid_move or boards_equal:
             scores[best_move_index] = -1
             best_move_index = np.argmax(scores)
-        elif np.sum(scores) <= 0:
+        elif np.sum(scores) <= 0 or not any_moves_possible(new_board):
             break
         else:
             break
