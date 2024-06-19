@@ -3,7 +3,7 @@
 **Automatic DevContainer**
 
 [![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=w0lfzk1nd-school/2048AI-Webgui)
-
+---
 Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung verwendet einen Dev-Container, der in Visual Studio Code (VSCode) ausgeführt wird und alle notwendigen Abhängigkeiten sowie Konfigurationen enthält, um eine reibungslose Entwicklung zu ermöglichen.
 
 ## Dokumentation Inhalt Dev-Container:
