@@ -23,6 +23,7 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 ## Inhaltsverzeichnis
 
 - [2048AI Dev Container](#2048ai-dev-container)
+  - [Dokumentation Inhalt Dev-Container:](#dokumentation-inhalt-dev-container)
   - [Inhaltsverzeichnis](#inhaltsverzeichnis)
   - [Voraussetzungen](#voraussetzungen)
   - [Ablauf der Einrichtung](#ablauf-der-einrichtung)
@@ -34,6 +35,7 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
   - [Bekannte Probleme](#bekannte-probleme)
 - [**2048 AI Projekt**](#2048-ai-projekt)
   - [**Struktur**](#struktur)
+  - [**Benutzung**](#benutzung)
     - [**WebGui**](#webgui)
     - [**Keras Modell Training**](#keras-modell-training)
 - [Zusammenfassung](#zusammenfassung)
@@ -177,7 +179,23 @@ Dieses Projekt umfasst folgendes:
   - [Struktur](#struktur)
   - [WebGui Data Collecter](#webgui)
   - [Keras Modell Trainer](#keras-modell-training)
+---
+## **Benutzung**
 
+**WebGui**
+
+Das WebGui startet man mit:
+```
+python3 webgui/app.py
+```
+
+**Modell-Training und Dataset-Tools**
+
+Das Konsolenmenü für das Training und vorbereitung/verarbeitung der gesammelten Daten/Datasets startet man mit:
+```
+python3 main.py
+```
+---
 ### **WebGui**
 
 ![WebGui](2048ai_webgui.PNG "WebGui")
