@@ -3,3 +3,4 @@ tensorflow
 flask
 questionary
 matplotlib
+mysql

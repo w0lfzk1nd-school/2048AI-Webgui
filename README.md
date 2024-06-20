@@ -106,6 +106,7 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
     flask
     questionary
     matplotlib
+    mysql
     ```
 
 ## Verzeichnisstruktur
