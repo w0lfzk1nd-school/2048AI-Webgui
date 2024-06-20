@@ -4,25 +4,26 @@
 
 [![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=w0lfzk1nd-school/2048AI-Webgui)
 ---
-Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung verwendet einen Dev-Container, der in Visual Studio Code (VSCode) ausgeführt wird und alle notwendigen Abhängigkeiten sowie Konfigurationen enthält, um eine reibungslose Entwicklung zu ermöglichen.
+Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung verwendet einen Dev-Container, der in Visual **Studio Code (VSCode)** oder **Github Codespaces** ausgeführt wird und alle notwendigen Abhängigkeiten sowie Konfigurationen enthält, um eine reibungslose Entwicklung zu ermöglichen.
 
 ## Dokumentation Inhalt Dev-Container:
 - DevContainer_README.md --> **vorhanden**
 - Automatisierte Installation Abhängikeiten --> **requirements.txt vorhanden**
-- Nützliche Extensions --> **vorhanden**
+- Nützliche Extensions --> **prüfen**
 - Debugging-Unterstützung --> ?
 - Datenbankintegration --> ? (Für highscores bzw runtime data maybe?)
 - Produktionsbereite Container --> **vorhanden**
 - Sicheres Handling sensibler Daten --> ?
 - Demodaten --> ?
 - Alternativlösung --> ?
-- One-Click Setup --> ?
+- One-Click Setup --> **Codespace vorhanden**
 - Pull Request --> **Eigenes Projekt**
 
 
 ## Inhaltsverzeichnis
 
 - [2048AI Dev Container](#2048ai-dev-container)
+  - [](#)
   - [Dokumentation Inhalt Dev-Container:](#dokumentation-inhalt-dev-container)
   - [Inhaltsverzeichnis](#inhaltsverzeichnis)
   - [Voraussetzungen](#voraussetzungen)
@@ -36,7 +37,10 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 - [**2048 AI Projekt**](#2048-ai-projekt)
   - [**Struktur**](#struktur)
   - [**Benutzung**](#benutzung)
-    - [**WebGui**](#webgui)
+      - [**WebGui**](#webgui)
+      - [**Modell-Training und Dataset-Tools**](#modell-training-und-dataset-tools)
+      - [**Datasets Struktur**](#datasets-struktur)
+    - [**WebGui**](#webgui-1)
     - [**Keras Modell Training**](#keras-modell-training)
 - [Zusammenfassung](#zusammenfassung)
   
@@ -72,26 +76,30 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
     ```json
     {
         "name": "2048AI Dev Container",
-        "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bookworm",
+        "dockerComposeFile": "docker-compose.yml",
+        "service": "app",
         "workspaceFolder": "/workspace",
-        "forwardPorts": [8282, 8283],
-        "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/requirements.txt",
+        "forwardPorts": [8282, 8283, 8085],
+        "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/.devcontainer/requirements.txt",
         "customizations": {
             "vscode": {
                 "extensions": [
-                    "ms-python.python",
-                    "yzhang.markdown-all-in-one"
+                  "ms-python.python", // Python
+                  "ms-python.autopep8", // Formatter
+                  "yzhang.markdown-all-in-one", //Markdown
+                  "ms-toolsai.jupyter-renderers", //Jupyter Notebook
+                  "ms-python.black-formatter" // Additional Python Formatter
                 ],
                 "settings": {
                     "python.pythonPath": "/usr/local/bin/python"
                 }
             }
-        },
-        "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind"
+        }
     }
+
     ```
 
-4. **Erstelle die Datei `requirements.txt` im Hauptverzeichnis des Projekts:**
+4. **Erstelle die Datei `requirements.txt` im `.devcontainer`:**
 
     ```plaintext
     numpy
@@ -109,8 +117,14 @@ Stelle sicher, dass dein Projektverzeichnis wie folgt aussieht:
 2048AI/
 ├── .devcontainer/
 │  ├── devcontainer.json
-├── requirements.txt
-└── (andere Projektdateien)
+│  ├── Dockerfile
+│  ├── docker-compose.json
+│  ├── .env (Beispiel / Vorlage)
+│  ├── env-schema
+│  ├── requirements.txt
+├── 2048_Project/
+│  ├── (Projektdateien)
+└── (Repository Dateien)
 ```
 
 
@@ -118,27 +132,43 @@ Stelle sicher, dass dein Projektverzeichnis wie folgt aussieht:
 
 Die Datei `.devcontainer/devcontainer.json` definiert die Konfiguration des Dev-Containers:
 
-- **Image**: Verwendet ein Python-Image (Python 3.11) basierend auf Debian Bookworm.
+- **Name**: Alle haben das Recht auf einen Namen.
+- **DockerComposeFile**: Bezieht die notwendigen Dockerdaten aus der `Docker-Compose` Datei.
+- **Service**: Setzt den Namen für den Service des Devcontainers innerhalb der Compose.
 - **Arbeitsverzeichnis**: Setzt das Arbeitsverzeichnis im Container auf `/workspace`.
-- **Portweiterleitung**: Leitet die Ports 8282 und 8283 vom Container an den Host weiter.
+- **Portweiterleitung**: Leitet die Ports 8282, 8283 und 8085 vom Container an den Host weiter.
 - **Post Create Command**: Installiert die Python-Abhängigkeiten nach dem Erstellen des Containers.
-- **VSCode-Erweiterungen**: Installiert die Python- und Markdown-All-in-One-Erweiterungen.
+- **VSCode-Erweiterungen**: Installiert die Python- und weitere Erweiterungen.
 - **Workspace Mount**: Bindet das Host-Verzeichnis `2048AI` in den Container unter `/workspace`.
 
 ## Nutzung des Dev-Containers
+
+**In Visual Studio Code**
 
 1. **Öffne VSCode und lade das Projektverzeichnis `2048AI`.**
 2. **Klicke auf das grüne Symbol unten links in der Statusleiste (Open a Remote Window).**
 3. **Wähle `Reopen in Container`.**
 
+**In Github Codespaces**
+
+1. **Klicke den `Open in Codespaces` Button ganz oben.
+
+
 VSCode startet nun den Dev-Container und installiert die notwendigen Abhängigkeiten gemäß der Datei `requirements.txt`.
+
+Ob im Browser oder als Anwendung :)
 
 ## Ports
 
 Die folgenden Ports werden für die Entwicklung genutzt und vom Container an den Host weitergeleitet:
 
-- **8282**: Wird auf Port 8282 des Hosts gemappt.
-- **8283**: Wird auf Port 8283 des Hosts gemappt.
+- **8282**: Wird auf Port 8282 des Hosts gemappt. *(Projekt Hauptport des WebGUI)*
+- **8283**: Wird auf Port 8283 des Hosts gemappt. *(Projekt Entwicklungsport des WebGUI)*
+- **8085**: Wird auf Port 8085 des Hosts gemappt. *(Datenbankanbindung via pmpMyAdmin)*
+  
+Die folgenden Ports werden für die Entwicklung genutzt, jedoch nicht an den Host weitergeleitet:
+
+- **3306**: Mysql Docker.
 
 ## VSCode Erweiterungen
 
@@ -146,6 +176,9 @@ Die folgenden Erweiterungen werden im Dev-Container installiert:
 
 - [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 - [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
+- [Jupyter Notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter-renderers)
+- [Python Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
+- [Autopep8 Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.autopep8)
 
 ## Bekannte Probleme
 
@@ -177,24 +210,55 @@ Dieses Projekt umfasst folgendes:
 
 - [2048 AI Projekt](#2048ai-ai-projekt)
   - [Struktur](#struktur)
+  - [Benutzung](#benutzung)
   - [WebGui Data Collecter](#webgui)
   - [Keras Modell Trainer](#keras-modell-training)
 ---
 ## **Benutzung**
 
-**WebGui**
+#### **WebGui**
 
 Das WebGui startet man mit:
 ```
 python3 webgui/app.py
 ```
 
-**Modell-Training und Dataset-Tools**
+#### **Modell-Training und Dataset-Tools**
 
 Das Konsolenmenü für das Training und vorbereitung/verarbeitung der gesammelten Daten/Datasets startet man mit:
 ```
 python3 main.py
 ```
+
+#### **Datasets Struktur**
+
+*[ [board, richtung], [board, richtung] ]*
+
+```
+  [
+    [
+      [
+        [4, 8, 64, 512],
+        [0, 4, 16, 32],
+        [0, 0, 2, 8],
+        [0, 2, 0, 4] // Board
+      ],
+      3 // Richtung
+    ], // Nächster Zug
+  ]
+```
+
+- `datasets/dataset_0_*` = 280'000 Spielzüge mit Highscore **2048**.
+  - 100'000 menschliche Züge.
+  - 70'000 Expert AI Züge.
+  - 50'000 ChatGPT / Ollama Züge.
+  - 60'000 Zufällige Spielfelder.
+- `datasets/dataset_0_280k_augmented` = 1.7 Millionen Spielzüge *wie oben* nur mit Augemntation:
+  - *Spiegle vertikal*
+  - *Spiegle horizontal*
+  - *Drehe 3x um 90°*
+- `datasets/dataset_1_*` = Gleiche Spielzüge wie oben mit einem [**MCTS Algorithmus**](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#:~:text=In%20computer%20science%2C%20Monte%20Carlo,to%20solve%20the%20game%20tree.) analysiert um den bestmöglichen Zug zu ermitteln.
+
 ---
 ### **WebGui**
 

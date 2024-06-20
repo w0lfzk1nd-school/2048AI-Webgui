@@ -3,4 +3,3 @@ tensorflow
 flask
 questionary
 matplotlib
-ollama

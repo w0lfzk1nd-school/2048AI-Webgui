@@ -5,16 +5,10 @@
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
-    //"image": "devcontainer-app",
-    
-    // Set the default working directory
+
     "workspaceFolder": "/workspace",
 
-    // Features to add to the dev container. More info: https://containers.dev/features.
-    // "features": {},
-
-    // Use 'forwardPorts' to make a list of ports inside the container available locally.
-    "forwardPorts": [8282, 8283, 3307, 8085],
+    "forwardPorts": [8282, 8283, 8085],
 
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/.devcontainer/requirements.txt",
@@ -23,8 +17,11 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "ms-python.python",
-                "yzhang.markdown-all-in-one"
+                "ms-python.python", // Python
+                "ms-python.autopep8", // Formatter
+                "yzhang.markdown-all-in-one", //Markdown
+                "ms-toolsai.jupyter-renderers", //Jupyter Notebook
+                "ms-python.black-formatter" // Additional Python Formatter
             ],
             "settings": {
                 "python.pythonPath": "/usr/local/bin/python"
