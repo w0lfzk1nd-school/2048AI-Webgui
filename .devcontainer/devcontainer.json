@@ -18,10 +18,9 @@
         "vscode": {
             "extensions": [
                 "ms-python.python", // Python
-                "ms-python.autopep8", // Formatter
                 "yzhang.markdown-all-in-one", //Markdown
                 "ms-toolsai.jupyter-renderers", //Jupyter Notebook
-                "ms-python.black-formatter" // Additional Python Formatter
+                "ms-python.black-formatter" // Python Formatter
             ],
             "settings": {
                 "python.pythonPath": "/usr/local/bin/python"

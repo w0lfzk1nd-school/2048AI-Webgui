@@ -85,10 +85,9 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
             "vscode": {
                 "extensions": [
                   "ms-python.python", // Python
-                  "ms-python.autopep8", // Formatter
                   "yzhang.markdown-all-in-one", //Markdown
                   "ms-toolsai.jupyter-renderers", //Jupyter Notebook
-                  "ms-python.black-formatter" // Additional Python Formatter
+                  "ms-python.black-formatter" // Python Formatter
                 ],
                 "settings": {
                     "python.pythonPath": "/usr/local/bin/python"
@@ -178,7 +177,6 @@ Die folgenden Erweiterungen werden im Dev-Container installiert:
 - [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
 - [Jupyter Notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter-renderers)
 - [Python Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
-- [Autopep8 Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.autopep8)
 
 ## Bekannte Probleme
 
