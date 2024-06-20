@@ -2,10 +2,12 @@ from ai.model import create_model
 from ai.environment import Environment
 from ai.ai_player import AIPlayer, save_to_dataset
 import numpy as np
+import random
 import questionary
 import datetime
 import json
 import os
+from keras.optimizers import Adam  # Importieren Sie den Optimierer
 from utils.utilities import (
     print_and_log,
     select_model,
@@ -17,10 +19,24 @@ from utils.utilities import (
 )
 from tensorflow.keras.models import load_model
 
+#def train_from_replay(ai_player, batch):
+#    print(">> Training from memory!")
+#    for state, action, reward, next_state, done in batch:
+#        state = np.reshape(state, (1, 4, 4, 1))
+#        next_state = np.reshape(next_state, (1, 4, 4, 1))
+#        target = reward
+#        if not done:
+#            target += ai_player.gamma * np.amax(ai_player.model.predict(next_state)[0])
+#        target_f = ai_player.model.predict(state)
+#        target_f[0][action] = target
+#        ai_player.model.fit(state, target_f, epochs=1, verbose=0)
 
 def train_model(episodes=1000, mode="interactive"):
     global highscore, bestscore
     model, json_path, training_info = setup_training()
+    
+    optimizer = Adam(learning_rate=0.001)
+    model.compile(optimizer=optimizer, loss='mse')
 
     env = Environment()
     env.model = f"{training_info['model_name']}"
@@ -41,6 +57,7 @@ def train_model(episodes=1000, mode="interactive"):
             bestscore = env.game.bestblock
 
         state = env.reset()
+        state = np.reshape(state, (1, 4, 4, 1))
         done = False
         steps = 0
         if exit:
@@ -67,7 +84,12 @@ def train_model(episodes=1000, mode="interactive"):
                     action = ai_player.choose_action(state)
 
                 next_state, reward, done = env.step(action)
+                next_state = np.reshape(next_state, (1, 4, 4, 1))
                 ai_player.remember(state, action, reward, next_state, done)
+                
+                # Training des Modells mit einem zufälligen Batch aus dem Speicher
+                if len(ai_player.memory) % ai_player.batch_size*4 == 0:
+                    ai_player.replay()
 
                 if len(ai_player.memory) % 30 == 0:
                     current_time = datetime.datetime.now()
@@ -100,6 +122,7 @@ def train_model(episodes=1000, mode="interactive"):
 
         ai_player.epsilon *= ai_player.epsilon_decay
         ai_player.epsilon = max(ai_player.epsilon_min, ai_player.epsilon)
+        ai_player.replay()
 
         env.runtime_history.append(round(time_trained, 3))
         print_and_log(

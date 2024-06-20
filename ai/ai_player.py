@@ -15,12 +15,13 @@ def save_to_dataset(data):
 
 
 class AIPlayer:
-    def __init__(self, model=None, epsilon=1.0, epsilon_min=0.07, epsilon_decay=0.994):
+    def __init__(self, model=None, epsilon=1.0, epsilon_min=0.02, epsilon_decay=0.9999):
         self.model = model
         self.epsilon = epsilon
         self.epsilon_min = epsilon_min
         self.epsilon_decay = epsilon_decay
         self.memory = []
+        self.batch_size = 32
         self.gamma = 0.95
         self.last_actions = [None, None]
 
@@ -38,7 +39,7 @@ class AIPlayer:
             )
             action = random.randrange(4)
         else:
-            act_values = self.model.predict(state.reshape(1, 4, 4))
+            act_values = self.model.predict(state.reshape(1, 4, 4, 1))
             action = np.argmax(act_values[0])
             print_and_log(
                 f"==================================================\n>> Predicted Action Values: {act_values} (Epsilon: {self.epsilon})"
@@ -48,7 +49,7 @@ class AIPlayer:
 
     def is_last_actions_same(self, state):
         if self.last_actions[0] is not None and self.last_actions[1] is not None:
-            prev_act_values = self.model.predict(state.reshape(1, 4, 4))
+            prev_act_values = self.model.predict(state.reshape(4, 4, 1))
             return np.array_equal(
                 prev_act_values, self.last_actions[0]
             ) or np.array_equal(prev_act_values, self.last_actions[1])
@@ -60,11 +61,11 @@ class AIPlayer:
             target = reward
             if not done:
                 target = reward + self.gamma * np.max(
-                    self.model.predict(next_state.reshape(1, 4, 4))[0]
+                    self.model.predict(next_state.reshape(1, 4, 4, 1))[0]
                 )
-            target_f = self.model.predict(state.reshape(1, 4, 4))
+            target_f = self.model.predict(state.reshape(1, 4, 4, 1))
             target_f[0][action] = target
-            self.model.train_on_batch(state.reshape(1, 4, 4), target_f)
+            self.model.train_on_batch(state.reshape(1, 4, 4, 1), target_f)
 
     def load(self, name):
         from tensorflow.keras.models import load_model

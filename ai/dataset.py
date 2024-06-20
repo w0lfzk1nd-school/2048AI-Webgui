@@ -552,7 +552,7 @@ def train_model_with_dataset(model, dataset, epochs=10, batch_size=32):
 
     # Train the model with the original dataset
     print("Training with original dataset...")
-    model.fit(states, actions_one_hot, epochs=epochs, batch_size=batch_size)
+    model.fit(states, actions_one_hot, epochs=epochs, batch_size=batch_size, validation_split=0.1)
 
     if questionary.confirm("Do you want to train the augmented dataset too?").ask():
         # -- Generate and preprocess the augmented dataset
