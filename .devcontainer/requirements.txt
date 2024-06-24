@@ -4,3 +4,4 @@ flask
 questionary
 matplotlib
 mysql
+mysql-connector-python

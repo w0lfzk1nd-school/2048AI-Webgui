@@ -78,20 +78,35 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
 3. **Erstelle die Datei `.devcontainer/devcontainer.json` mit folgendem Inhalt:**
 
     ```json
+    // For format details, see https://aka.ms/devcontainer.json. For config options, see the
+    // README at: https://github.com/devcontainers/templates/tree/main/src/python
     {
         "name": "2048AI Dev Container",
+        // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
         "dockerComposeFile": "docker-compose.yml",
         "service": "app",
         "workspaceFolder": "/workspace",
-        "forwardPorts": [8282, 8283, 8085],
-        "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/.devcontainer/requirements.txt",
+        "forwardPorts": [
+            8282,
+            8283,
+            8085,
+            3036
+        ],
+        // Use 'postCreateCommand' to run commands after the container is created.
+        // "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/.devcontainer/requirements.txt",
+        
+        // Configure tool-specific properties.
         "customizations": {
             "vscode": {
                 "extensions": [
-                  "ms-python.python", // Python
-                  "yzhang.markdown-all-in-one", //Markdown
-                  "ms-toolsai.jupyter-renderers", //Jupyter Notebook
-                  "ms-python.black-formatter" // Python Formatter
+                    "ms-python.python", // Python
+                    "yzhang.markdown-all-in-one", //Markdown
+                    "ms-toolsai.jupyter-renderers", //Jupyter Notebook
+                    "ms-python.black-formatter", // Python Formatter
+                    "GitHub.copilot", // Github-Copilot
+                    "ms-azuretools.vscode-docker", // Docker
+                    "p1c2u.docker-compose", // Docker-Compose
+                    "hediet.debug-visualizer" // Debug Visualizer
                 ],
                 "settings": {
                     "python.pythonPath": "/usr/local/bin/python"
@@ -99,10 +114,106 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
             }
         }
     }
-
     ```
 
-4. **Erstelle die Datei `requirements.txt` im `.devcontainer`:**
+4. **Erstelle die Datei `docker-compose.yml` im `.devcontainer`:**
+
+```yml
+  version: '3.8'
+  services:
+    app:
+      restart: always
+      build:
+        context: ..
+        dockerfile: .devcontainer/Dockerfile
+      volumes:
+        - workspace_volume:/workspace
+        - ..:/workspace/Local # Erlaubt editieren des Projektes ausserhalb des Dockers
+      ports:
+        - 8282:8282
+        - 8283:8283
+      environment:
+        - MYSQL_HOST=${MYSQL_HOST}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_DB=${MYSQL_DB}
+      depends_on:
+        - mysql
+      working_dir: /workspace
+
+    mysql:
+      image: mysql
+      restart: always
+      environment:
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_DB=${MYSQL_DB}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      ports:
+        - 3306:3306
+      volumes:
+        - mysql-data:/var/lib/mysql
+        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    tool:
+      image: phpmyadmin
+      restart: always
+      ports:
+        - "8085:80"
+      environment:
+        - PMA_HOST=${MYSQL_HOST}
+        - PMA_USER=${MYSQL_USER}
+        - PMA_PASSWORD=${MYSQL_PASSWORD}
+      depends_on: 
+        - mysql
+
+  volumes:
+    mysql-data:
+    workspace_volume:
+```
+
+5. **Erstelle die Datei `Dockerfile` im `.devcontainer`:**
+
+```Dockerfile
+  # Verwenden eines Basisimages mit Python
+  FROM python:3.11-bookworm
+
+  # Festlegen des Arbeitsverzeichnisses im Container
+  WORKDIR /workspace
+
+  # Kopieren der Dateien in Container-Volume
+  COPY .devcontainer/requirements.txt /workspace/requirements.txt
+  COPY .devcontainer/.env /workspace/.env
+  COPY .gitignore /workspace/.gitignore
+  COPY db_test.py /workspace/
+  COPY README.md /workspace/README.md
+  COPY 2048_Project /workspace/2048_Project
+  COPY .devcontainer /workspace/.devcontainer
+
+  # Installieren der notwendigen Libraries
+  RUN pip install --upgrade pip
+  RUN pip install -r requirements.txt
+  RUN apt-get update && apt-get upgrade -y
+
+  # Umgebungsvariablen setzen
+  ENV MYSQL_HOST=${MYSQL_HOST}
+  ENV MYSQL_USER=${MYSQL_USER}
+  ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  ENV MYSQL_DB=${MYSQL_DB}
+
+  # Offene Ports für Flask
+  EXPOSE 8282
+  EXPOSE 8283
+  EXPOSE 3306
+  EXPOSE 8085
+
+  # Startbefehl
+  CMD ["tail", "-f", "/dev/null"]
+  # CMD ["python", "/workspace/Project/webgui/app.py"]
+```
+
+6. **Erstelle die Datei `requirements.txt` im `.devcontainer`:**
 
     ```plaintext
     numpy
@@ -117,7 +228,7 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
 
 Stelle sicher, dass dein Projektverzeichnis wie folgt aussieht:
 
-```
+```plaintext
 2048AI/
 ├── .devcontainer/
 │  ├── devcontainer.json
@@ -143,7 +254,6 @@ Die Datei `.devcontainer/devcontainer.json` definiert die Konfiguration des Dev-
 - **Portweiterleitung**: Leitet die Ports 8282, 8283 und 8085 vom Container an den Host weiter.
 - **Post Create Command**: Installiert die Python-Abhängigkeiten nach dem Erstellen des Containers.
 - **VSCode-Erweiterungen**: Installiert die Python- und weitere Erweiterungen.
-- **Workspace Mount**: Bindet das Host-Verzeichnis `2048AI` in den Container unter `/workspace`.
 
 ## Nutzung des Dev-Containers
 
@@ -169,9 +279,6 @@ Die folgenden Ports werden für die Entwicklung genutzt und vom Container an den
 - **8282**: Wird auf Port 8282 des Hosts gemappt. *(Projekt Hauptport des WebGUI)*
 - **8283**: Wird auf Port 8283 des Hosts gemappt. *(Projekt Entwicklungsport des WebGUI)*
 - **8085**: Wird auf Port 8085 des Hosts gemappt. *(Datenbankanbindung via pmpMyAdmin)*
-  
-Die folgenden Ports werden für die Entwicklung genutzt, jedoch nicht an den Host weitergeleitet:
-
 - **3306**: Mysql Docker.
 
 ## VSCode Erweiterungen
@@ -182,6 +289,11 @@ Die folgenden Erweiterungen werden im Dev-Container installiert:
 - [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
 - [Jupyter Notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter-renderers)
 - [Python Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
+- [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
+- [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
+- [Docker-Compose](https://marketplace.visualstudio.com/items?itemName=p1c2u.docker-compose)
+- [Debug Visualizer](https://marketplace.visualstudio.com/items?itemName=hediet.debug-visualizer)
+
 
 ## Bekannte Probleme
 
@@ -189,6 +301,11 @@ Falls der Fehler "workspace does not exist" auftritt, überprüfe die folgenden 
 
 - **Pfadüberprüfung**: Stelle sicher, dass der Pfad zum Projektverzeichnis korrekt ist. Verwende absolute Pfade, um mögliche Fehler zu vermeiden.
 - **Berechtigungen**: Stelle sicher, dass du die notwendigen Berechtigungen hast, um auf das Verzeichnis zuzugreifen und es zu mounten.
+
+Die Datenbank wird nicht erkannt bzw Test schlägt fehl:
+
+- **Berechtigungen**: Prüfe ob der Benutzer in der `.devcontainer/init.db` der selbe ist wie in der `.env` angegeben.
+- **Andere**: Prüfe die anderen `.env` Angaben.
 
 Bei weiteren Problemen oder Fragen, essen sie die Packungsbeilage und sagen sie ihrem Arzt er sei Apotheker.
 

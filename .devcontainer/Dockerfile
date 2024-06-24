@@ -8,6 +8,7 @@ WORKDIR /workspace
 COPY .devcontainer/requirements.txt /workspace/requirements.txt
 COPY .devcontainer/.env /workspace/.env
 COPY .gitignore /workspace/.gitignore
+COPY db_test.py /workspace/
 COPY README.md /workspace/README.md
 COPY 2048_Project /workspace/2048_Project
 COPY .devcontainer /workspace/.devcontainer
@@ -27,7 +28,7 @@ ENV MYSQL_DB=${MYSQL_DB}
 # Offene Ports für Flask
 EXPOSE 8282
 EXPOSE 8283
-EXPOSE 3307
+EXPOSE 3306
 EXPOSE 8085
 
 # Startbefehl

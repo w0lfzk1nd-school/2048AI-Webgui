@@ -9,7 +9,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
     volumes:
       - workspace_volume:/workspace
-      #- ..:/workspace/Local
+      - ..:/workspace/Local # Erlaubt editieren des Projektes ausserhalb des Dockers
     ports:
       - 8282:8282
       - 8283:8283
@@ -27,7 +27,7 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DB=${MYSQL_SB}
+      - MYSQL_DB=${MYSQL_DB}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:

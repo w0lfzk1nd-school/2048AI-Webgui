@@ -5,14 +5,16 @@
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
-
     "workspaceFolder": "/workspace",
-
-    "forwardPorts": [8282, 8283, 8085],
-
+    "forwardPorts": [
+        8282,
+        8283,
+        8085,
+        3306
+    ],
     // Use 'postCreateCommand' to run commands after the container is created.
     // "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/.devcontainer/requirements.txt",
-
+    
     // Configure tool-specific properties.
     "customizations": {
         "vscode": {
@@ -20,7 +22,11 @@
                 "ms-python.python", // Python
                 "yzhang.markdown-all-in-one", //Markdown
                 "ms-toolsai.jupyter-renderers", //Jupyter Notebook
-                "ms-python.black-formatter" // Python Formatter
+                "ms-python.black-formatter", // Python Formatter
+                "GitHub.copilot", // Github-Copilot
+                "ms-azuretools.vscode-docker", // Docker
+                "p1c2u.docker-compose", // Docker-Compose
+                "hediet.debug-visualizer" // Debug Visualizer
             ],
             "settings": {
                 "python.pythonPath": "/usr/local/bin/python"
