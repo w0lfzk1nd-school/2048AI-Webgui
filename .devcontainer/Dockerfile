@@ -1,3 +1,5 @@
+# Dockerfile
+
 # Verwenden eines Basisimages mit Python
 FROM python:3.11-bookworm
 
