@@ -11,7 +11,7 @@
     "forwardPorts": [8282, 8283, 8085],
 
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/.devcontainer/requirements.txt",
+    // "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/.devcontainer/requirements.txt",
 
     // Configure tool-specific properties.
     "customizations": {

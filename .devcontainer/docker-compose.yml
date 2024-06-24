@@ -3,11 +3,13 @@ version: '3.8'
 services:
 
   app:
+    restart: always
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
     volumes:
-      - ..:/workspace
+      - workspace_volume:/workspace
+      #- ..:/workspace/Local
     ports:
       - 8282:8282
       - 8283:8283
@@ -26,6 +28,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - 3306:3306
     volumes:
@@ -34,12 +38,16 @@ services:
 
   tool:
     image: phpmyadmin
+    restart: always
     ports:
       - "8085:80"
     environment:
-      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=${MYSQL_USER}
+      - PMA_PASSWORD=${MYSQL_PASSWORD}
     depends_on: 
       - mysql
 
 volumes:
   mysql-data:
+  workspace_volume:

@@ -9,11 +9,11 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 ## Dokumentation Inhalt Dev-Container:
 - DevContainer_README.md --> **vorhanden**
 - Automatisierte Installation Abhängikeiten --> **requirements.txt vorhanden**
-- Nützliche Extensions --> **prüfen**
+- Nützliche Extensions --> **vorhanden**
 - Debugging-Unterstützung --> ?
 - Datenbankintegration --> ? (Für highscores bzw runtime data maybe?)
 - Produktionsbereite Container --> **vorhanden**
-- Sicheres Handling sensibler Daten --> ?
+- Sicheres Handling sensibler Daten --> **vorhanden**
 - Demodaten --> ?
 - Alternativlösung --> ?
 - One-Click Setup --> **Codespace vorhanden**
@@ -55,6 +55,10 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
 - (optional) [Git](https://git-scm.com/downloads)
 
 ## Ablauf der Einrichtung
+
+0. **Editieren der `.env` Datei**
+  
+  Bevor irgendetwas getan werden kann, muss die `.devcontainer/.env` editiert werden.
 
 *Dies muss in dieser Repo nicht nochmals wiederholt werden*
 
