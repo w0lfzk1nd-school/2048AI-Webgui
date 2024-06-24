@@ -3,7 +3,7 @@ from mysql.connector import Error
 
 # MySQL Verbindungsinformationen
 MYSQL_USER = 'master'
-MYSQL_PASSWORD = 'Your-DB-Password'
+MYSQL_PASSWORD = 'yourpassword'
 MYSQL_DATABASE = '2048AI'
 
 # Testdaten für die Tabellen
