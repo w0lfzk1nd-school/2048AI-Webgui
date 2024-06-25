@@ -32,7 +32,7 @@ function loadMovesCount() {
         .then(response => response.json())
         .then(data => {
             const movesCount = document.getElementById('moves-count');
-            movesCount.textContent = `Total Moves Learned: ${format_num(0 + data.length)}`;
+            movesCount.textContent = `Total Moves Learned: ${format_num(data)}`;
         });
 }
 

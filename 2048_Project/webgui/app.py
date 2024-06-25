@@ -7,8 +7,6 @@ import uuid
 import os
 import sys
 from threading import Lock
-import mysql.connector
-from mysql.connector import Error
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils.utilities import (
@@ -20,12 +18,19 @@ from utils.utilities import (
 )
 from ai.monte_carlo import monte_predict
 import json
+from utils.handle_db import DatabaseHandler
 
 global move_file
 
 app = Flask(__name__)
 
 setup_logging("flask")
+
+# Erstellen einer Instanz der DatabaseHandler-Klasse
+db_handler = DatabaseHandler()
+
+webgui_db = db_handler.handle_db('select', 'webgui')
+webgui_leaderboard = db_handler.handle_db("select", "web_leaderboard")
 
 app.secret_key = os.urandom(24)
 moves = []
@@ -34,10 +39,10 @@ helpers = 0
 turns = 0
 
 # Define global variables and a lock
-total_highscore = 0
-total_bestblock = 0
-total_highscore_txt = "[ 0 ] @00:00:00 01/01/1970"
-total_bestblock_txt = "[ 0 ] @00:00:00 01/01/1970"
+total_highscore = webgui_db[0][1]
+total_bestblock = webgui_db[0][3]
+total_highscore_txt = webgui_db[0][2]
+total_bestblock_txt = webgui_db[0][4]
 highscore_lock = Lock()
 
 # Helper functions for serializing and deserializing the game state
@@ -191,10 +196,15 @@ def make_move(direction):
     if game.score > total_highscore:
         total_highscore = game.score
         total_highscore_txt = f"[ {game.score} ] @{get_cute_time()}"
+        db_handler.handle_db("update", "webgui", {'highscore_txt': total_highscore_txt})
+        db_handler.handle_db("update", "webgui", {'highscore': game.score})
 
     if game.bestblock > total_bestblock:
         total_bestblock = game.bestblock
         total_bestblock_txt = f"[ {game.bestblock} ] @{get_cute_time()}"
+        db_handler.handle_db("update", "webgui", {'highblock_txt': total_highscore_txt})
+        db_handler.handle_db("update", "webgui", {'highblock': game.bestblock})
+        
     if isinstance(current_board, np.ndarray):
         board_list = current_board.tolist()
     else:
@@ -216,7 +226,7 @@ def make_move(direction):
 
 @app.route("/api/moves", methods=["GET"])
 def get_moves():
-    return jsonify(moves)
+    return jsonify(len(moves) + webgui_db[0][0])
 
 
 if __name__ == "__main__":
