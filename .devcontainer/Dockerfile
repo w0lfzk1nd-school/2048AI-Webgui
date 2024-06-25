@@ -32,5 +32,5 @@ EXPOSE 3306
 EXPOSE 8085
 
 # Startbefehl
-#CMD ["tail", "-f", "/dev/null"]
-CMD ["bash", "cd", "/workspace/2048_Project/webgui", "&&", "python3", "/workspace/2048_Project/webgui/app.py"]
+CMD ["tail", "-f", "/dev/null"]
+#CMD ["bash", "cd", "/workspace/2048_Project/webgui", "&&", "python3", "/workspace/2048_Project/webgui/app.py"]
