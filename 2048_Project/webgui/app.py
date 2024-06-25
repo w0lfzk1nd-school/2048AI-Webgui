@@ -7,6 +7,8 @@ import uuid
 import os
 import sys
 from threading import Lock
+import mysql.connector
+from mysql.connector import Error
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils.utilities import (
@@ -32,10 +34,10 @@ helpers = 0
 turns = 0
 
 # Define global variables and a lock
-total_highscore = 15152
-total_bestblock = 1024
-total_highscore_txt = "[ 15'152 ] @23:11:48 16/06/2024"
-total_bestblock_txt = "[ 1024 ] @00:35:47 16/06/2024"
+total_highscore = 0
+total_bestblock = 0
+total_highscore_txt = "[ 0 ] @00:00:00 01/01/1970"
+total_bestblock_txt = "[ 0 ] @00:00:00 01/01/1970"
 highscore_lock = Lock()
 
 # Helper functions for serializing and deserializing the game state
