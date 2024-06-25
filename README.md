@@ -46,14 +46,14 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
   - [Nutzung des Dev-Containers](#nutzung-des-dev-containers)
     - [-- In Visual Studio Code](#---in-visual-studio-code)
     - [-- In Github Codespaces](#---in-github-codespaces)
-    - [-- Als fertiges Image](#---als-fertiges-image)
+    - [-- Als fertiges Image ohne DevContainer](#---als-fertiges-image)
   - [Ports](#ports)
   - [VSCode Erweiterungen](#vscode-erweiterungen)
   - [Bekannte Probleme](#bekannte-probleme)
 - [**2048 AI Projekt**](#2048-ai-projekt)
   - [**Struktur**](#struktur)
   - [**Benutzung**](#benutzung)
-  - [Installation und Nutzung ohne Conatiner / Docker](#installation-und-nutzung-ohne-conatiner--docker)
+  - [Installation und Nutzung](#installation-und-nutzung-ohne-devcontainer)
       - [**WebGui**](#webgui)
       - [**Modell-Training und Dataset-Tools**](#modell-training-und-dataset-tools)
       - [**Datasets Struktur**](#datasets-struktur)
@@ -366,6 +366,8 @@ Bei weiteren Problemen oder Fragen, essen sie die Packungsbeilage und sagen sie 
 
 Viel Spaß beim Entwickeln mit deinem 2048AI Dev-Container!
 
+**AB HIER ENDET DER DEVCONTAINER. Nun folgt `Das Projekt`**
+
 ---
 
 # **2048 AI Projekt**
@@ -379,7 +381,7 @@ Dieses Projekt umfasst folgendes:
 
 **Das Projekt ist noch in der Entwicklungsphase!**
 
-## **Struktur**
+##*Struktur
 
 - [2048 AI Projekt](#2048ai-ai-projekt)
   - [Struktur](#struktur)
@@ -387,35 +389,31 @@ Dieses Projekt umfasst folgendes:
   - [WebGui Data Collecter](#webgui)
   - [Keras Modell Trainer](#keras-modell-training)
 ---
-## **Benutzung**
+## Benutzung
 
 ---
 
-## Installation und Nutzung ohne Conatiner / Docker
+## Installation und Nutzung ohne DevContainer
+
+*Der DevContainer dient zur Entwicklung des Projektes. Fertige Dockerdateien liegen bereit um das WebGUI einfach nur zu nutzen.*
 
 *Dieses Projekt ist ein **Sandkasten**. Und gleichzeitig eine Aufgabe für **Container**. Dieses Webgui wird in fertiger Form auf [meinem persönlichen Github](https://github.com/w0lfzk1n) erscheinen.*
 
-1. Erstelle einen Ordner auf deinem Computer für das Projekt. Z.b: `Documents/Scripts/2048AI/`
-2. Öffne in diesem Ordner ein Kommandofenster.
-   1. *Klicke oben in das Fenster wo der Pfad angezeigt wird und gebe `cmd` ein.*
-3. Stelle sicher dass du `Python3` und `pip` installiert hast.
-   1. **Python3 Windows:** Gebe in der Konsole `python3` ein. Der Microsoft-Market sollte sich automatisch öffnen.
-   2. **Pip Windows:**
-      1. Im Konsolenfenster: `curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py`
-   3. **Python3 & pip Linux:** [GeeksForGeeks.org](https://www.geeksforgeeks.org/how-to-install-pip-in-linux/)
-4. Prüfe deine Installationen:
-   1. `python3 --version`
-   2. `pip3 --version`
-5. Installiere die notwendigen Pakete:
-   1. `pip install -r .devcontainer/requirements.txt`
-6. Starte das WebGUI:
-   1. `cd 2048_Project/webgui && python3 app.py`
+  1. Erstelle einen Ordner auf deinem Computer für das Projekt. Z.b: `Documents/Scripts/2048AI/`
+  2. Öffne in diesem Ordner ein Kommandofenster.
+    1. *Klicke oben in das Fenster wo der Pfad angezeigt wird und gebe `cmd` ein.*
+  3. Stelle sicher dass du mindestens [Docker](https://www.docker.com/) oder [Docker Desktop](https://www.docker.com/products/docker-desktop/) installiert hast. Bestenfalls als VisualStudio-Code [Extensions](#vscode-erweiterungen)
+  4. Editiere die `.devcontainer/Dockerfile` und kommentiere den derzeitigen `CMD` aus und entferne das `#` der letzten Zeile. 
+  5. Führe `cd .devcontainer && docker-compose build && docker compose up`
+  6. Ihr solltet nun in eurer Docker-Installation 3 neue Container sehen.
 
-**Sobald dieses Projekt die Datenbank im WebGUI integriert hat, muss dieses Projekt als Docker verwendet werden müssen.**
+Siehe bei [**Projekt Ports**](#ports) um die verwendeten Ports zu sehen wie *WebGUI*, *Developer WebGUI*, *MySQL* und *phpMyAdmin* Interfaces.
+
+**Dieses Projekt muss im Docker laufen, da wir eine Datenbank verwenden. Jedoch ist es simpel das WebGUI in der `utils/handle_db.py` mit einer lokalen `MySQL-Datenbank` verbunden werden**
 
 ---
 
-#### **WebGui**
+#### WebGui
 
 Das WebGui startet man mit:
 ```bash
@@ -428,7 +426,7 @@ oder
 cd 2048_Project/webgui && python3 app.py
 ```
 
-#### **Modell-Training und Dataset-Tools**
+#### Modell-Training und Dataset-Tools
 
 Das Konsolenmenü für das Training und vorbereitung/verarbeitung der gesammelten Daten/Datasets startet man mit:
 ```bash
@@ -441,7 +439,7 @@ oder
 cd 2048_Project && python3 main.py
 ```
 
-#### **Datasets Struktur**
+#### Datasets Struktur
 
 *[ [board, richtung], [board, richtung] ]*
 
@@ -471,17 +469,23 @@ cd 2048_Project && python3 main.py
 - `datasets/dataset_1_*` = Gleiche Spielzüge wie oben mit einem [**MCTS Algorithmus**](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#:~:text=In%20computer%20science%2C%20Monte%20Carlo,to%20solve%20the%20game%20tree.) analysiert um den bestmöglichen Zug zu ermitteln.
 
 ---
-### **WebGui**
+### WebGui
 
 ![WebGui](2048ai_webgui.PNG "WebGui")
 
-Das WebGui wurde entwickelt, um Spielzüge und Spielzustände von echten Menschen zu sammeln, welche das Spiel spielen
+Das WebGui wurde entwickelt, um Spielzüge und Spielzustände von echten Menschen zu sammeln, welche das Spiel spielen.
+
+Es nutzt eine MySQL Datenbank um die Highscores zu zählen und das Leaderboard zu speichern.
+
+Das Leaderboard wird derzeit noch nicht im WebGUI verarbeitet, besteht jedoch in der Datenbank.
+
+Trianingsdaten werden derzeit noch als `JSON` abgespeichert, wobei ebenso in der Datenbank bereits Tabellen erstellt wurden. 
 
 **Additional:** Es gibt die Option, welche einen **[Monte Carlo Algorithm](https://de.wikipedia.org/wiki/Monte-Carlo-Simulation)** verwendet um für alle 4 Richtungen ca 10'000 Züge *(400 pro Zug selbst)* schätzt und die gewonnenen Punkte zurückgibt. Anhand dessen lässt sich festlegen welche Richtung für das jetztige Spielfeld ideal ist.
 
 ---
 
-### **Keras Modell Training**
+### Keras Modell Training
 
 Das Training des **[Keras AI Modell](https://de.wikipedia.org/wiki/Keras)** läuft in 4 Schritten ab:
 
@@ -494,10 +498,10 @@ Das Training des **[Keras AI Modell](https://de.wikipedia.org/wiki/Keras)** läu
     - *Augmentieren (Spiegeln, drehen)* **20min**
     - *Mithilfe des **Monte Carlo Algorithmus** für jedes Board den besten Zug ermitteln lassen.* **6 Stunden**
 
-- **Modell mit Dataset trainieren**
+- Modell mit Dataset trainieren
   - Nun kann das Modell mit den gesammelten und vorbereiteten Daten trainiert werden. In diesem Prozess werden alle Spielzustände, mit dem vom Algorithmus errechneten besten Zug, an das Modell in zufälliger Reihenfolge gezeigt.
 
-- **Modell selbst trainieren lassen und verfeinern.**
+- Modell selbst trainieren lassen und verfeinern.
   - In diesem Schritt, wird das Modell *24 bis 48 Stunden* alleine spielen und bei Problensituationen (wie einem vollen Board) wird dieses mit genaueren Spieldaten zu diesem Problem nachtrainiert.
 
 ---
