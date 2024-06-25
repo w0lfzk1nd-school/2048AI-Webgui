@@ -330,10 +330,10 @@ VSCode startet nun den Dev-Container und installiert die notwendigen Abhängigke
 
 Die folgenden Ports werden für die Entwicklung genutzt und vom Container an den Host weitergeleitet:
 
-- **8282**: Wird auf Port 8282 des Hosts gemappt. *(Projekt Hauptport des WebGUI)*
-- **8283**: Wird auf Port 8283 des Hosts gemappt. *(Projekt Entwicklungsport des WebGUI)*
-- **8085**: Wird auf Port 8085 des Hosts gemappt. *(Datenbankanbindung via pmpMyAdmin)*
-- **3306**: Mysql Docker.
+- [**8282**](http://localhost:8282) : Wird auf Port 8282 des Hosts gemappt. *(Projekt Hauptport des WebGUI)*
+- [**8283**](http://localhost:8283) : Wird auf Port 8283 des Hosts gemappt. *(Projekt Entwicklungsport `app_dev.py` des WebGUI)*
+- [**8085**](http://localhost:8085) : Wird auf Port 8085 des Hosts gemappt. *(Datenbankanbindung via pmpMyAdmin)*
+- [**3306**](http://localhost:3306) : Wird auf Port 3306 des Hosts gemappt. *(MySQL Datenbank Container)*
 
 ## VSCode Erweiterungen
 
