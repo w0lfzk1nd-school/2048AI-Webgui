@@ -6,9 +6,9 @@ WORKDIR /workspace
 
 # Kopieren der Dateien in Container-Volume
 COPY .devcontainer/requirements.txt /workspace/requirements.txt
+COPY run_* /workspace/
 COPY .devcontainer/.env /workspace/.env
 COPY .gitignore /workspace/.gitignore
-COPY db_test.py /workspace/
 COPY README.md /workspace/README.md
 COPY 2048_Project /workspace/2048_Project
 COPY .devcontainer /workspace/.devcontainer
@@ -32,5 +32,5 @@ EXPOSE 3306
 EXPOSE 8085
 
 # Startbefehl
-CMD ["tail", "-f", "/dev/null"]
-#CMD ["bash", "cd", "/workspace/2048_Project/webgui", "&&", "python3", "/workspace/2048_Project/webgui/app.py"]
+# CMD ["tail", "-f", "/dev/null"]
+CMD ["bash", "run_webgui.sh", "&&", "tail", "-f", "/dev/null"]

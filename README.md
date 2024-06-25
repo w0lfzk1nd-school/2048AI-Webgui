@@ -310,7 +310,7 @@ VSCode startet nun den Dev-Container und installiert die notwendigen Abhängigke
 
 ---
 
-### -- Als fertiges Image
+### -- Als fertiges Image (Ohne Devcontainer)
 
 1. Navigiere in einem **Terminal** in den `.devcontainer/` Ordner und führe:
 

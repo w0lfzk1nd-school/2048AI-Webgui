@@ -1,3 +1,1 @@
-cd 2048_Project
-python3 main.py
-cd /workspace
+cd 2048_Project && python3 main.py && cd /workspace
