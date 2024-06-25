@@ -6,7 +6,7 @@
 
 [![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=w0lfzk1nd-school/2048AI-Webgui)
 
-[![Open in VS Code](https://img.shields.io/badge/Open%20in%20VS%20Code-blue?logo=visualstudiocode)](vscode://vscode-remote/clone?url=https://github.com/w0lfzk1nd-school/2048AI-Webgui)
+[![Open in VS Code](https://img.shields.io/badge/Open%20in%20VS%20Code-blue?logo=visualstudiocode.svg)](vscode://vscode-remote/clone?url=https://github.com/w0lfzk1nd-school/2048AI-Webgui)
 
 ---
 Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung verwendet einen Dev-Container, der in Visual **Studio Code (VSCode)** oder **Github Codespaces** ausgeführt wird und alle notwendigen Abhängigkeiten sowie Konfigurationen enthält, um eine reibungslose Entwicklung zu ermöglichen.
