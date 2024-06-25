@@ -22,7 +22,7 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 | Automatisierte Installation Abhängikeiten | ✔️ | `requirements.txt` und `apt update` vorhanden. |
 | Nützliche Extensions | ✔️ | Liste unten vorhanden. |
 | Debugging-Unterstützung | ✔️ | Devcontainer gibt debugging aus. |
-| Datenbankintegration | ✔️ | Datenbank Container wird eingerichtet, im Projekt derzeit nicht verwendet. |
+| Datenbankintegration | ✔️ | `MySQL` Datenbank Container wird eingerichtet und teilweise im Projekt eingebaut. |
 | Produktionsbereite Container | ✔️ | Alles für den Devcontainer `devcontainer.json`, `docker-compose.yml` und `Dockerfile` erstellt. |
 | Sicheres Handling sensibler Daten | ✔️ | `.env` Datei erstellt und in `.gitignore` erwähnt. |
 | Demodaten | ✔️ | `db_test.py` zum Testen der Datenbankfunktion vorhanden. |
