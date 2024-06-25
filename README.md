@@ -8,6 +8,8 @@
 
 [![Open in Remote - Containers](https://xebia.com/wp-content/uploads/2023/11/v1.svg)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/w0lfzk1nd-school/2048AI-Webgui.git)
 
+https://github.com/w0lfzk1nd-school/2048AI-Webgui.git
+
 ---
 Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung verwendet einen Dev-Container, der in Visual **Studio Code (VSCode)** oder **Github Codespaces** ausgeführt wird und alle notwendigen Abhängigkeiten sowie Konfigurationen enthält, um eine reibungslose Entwicklung zu ermöglichen.
 
