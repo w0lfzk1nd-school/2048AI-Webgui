@@ -33,6 +33,10 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 ---
 ---
 
+[Simple Setup für nur WebGUI.](#installation-und-nutzung-ohne-devcontainer)
+
+---
+
 ## Inhaltsverzeichnis
 
 - [2048AI Dev Container](#2048ai-dev-container)
