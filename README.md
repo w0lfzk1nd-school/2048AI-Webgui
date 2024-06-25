@@ -1,5 +1,7 @@
 # 2048AI Dev Container
 
+![WebGui](2048ai_webgui.PNG "WebGui")
+
 **Automatic DevContainer**
 
 [![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=w0lfzk1nd-school/2048AI-Webgui)
@@ -7,26 +9,23 @@
 Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung verwendet einen Dev-Container, der in Visual **Studio Code (VSCode)** oder **Github Codespaces** ausgeführt wird und alle notwendigen Abhängigkeiten sowie Konfigurationen enthält, um eine reibungslose Entwicklung zu ermöglichen.
 
 ## Dokumentation Inhalt Dev-Container:
-- DevContainer_README.md --> **vorhanden**
-- Automatisierte Installation Abhängikeiten --> **vorhanden**
-    - *`requirements.txt` und `apt update` vorhanden.*
-- Nützliche Extensions --> **vorhanden**
-    - *Liste unten vorhanden.*
-- Debugging-Unterstützung --> **vorhanden**
-    - *Devcontainer gibt debugging aus.*
-- Datenbankintegration --> ? **vorhanden**
-    - *Datenbank Container wird eingerichtet, im Projekt derzeit nicht verwendet.*
-- Produktionsbereite Container --> **vorhanden**
-    - *Alles für den Devcontainer `devcontainer.json`, `docker-compose.yml` und `Dockerfile` erstellt.*
-- Sicheres Handling sensibler Daten --> **vorhanden**
-    - `.env` Datei erstellt und in `.gitignore` erwähnt.
-- Demodaten --> **vorhanden**
-    - `db_test.py` zum Testen der Datenbankfunktion vorhanden.*
-- Alternativlösung --> ?
-- One-Click Setup --> **Codespace vorhanden**
-    - *OneClick in `README.md` existiert und ist eingerichtet.*
-- Pull Request --> **Eigenes Projekt**
 
+| Bewertung     | Status | Kommentar |
+|---------------|--------|-----------|
+| DevContainer_README.md | ✔️ | - |
+| Automatisierte Installation Abhängikeiten | ✔️ | `requirements.txt` und `apt update` vorhanden. |
+| Nützliche Extensions | ✔️ | Liste unten vorhanden. |
+| Debugging-Unterstützung | ✔️ | Devcontainer gibt debugging aus. |
+| Datenbankintegration | ✔️ | Datenbank Container wird eingerichtet, im Projekt derzeit nicht verwendet. |
+| Produktionsbereite Container | ✔️ | Alles für den Devcontainer `devcontainer.json`, `docker-compose.yml` und `Dockerfile` erstellt. |
+| Sicheres Handling sensibler Daten | ✔️ | `.env` Datei erstellt und in `.gitignore` erwähnt. |
+| Demodaten | ✔️ | `db_test.py` zum Testen der Datenbankfunktion vorhanden. |
+| Alternativlösung | ✔️ | `Dockerfile` und `docker-compose.yml` zum bauen des fertigen Containers vorhanden. Ich möchte dies derzeit nicht öffentlich auf Dockerhub stellen, da dieses Projekt privat und nicht abgeschlossen ist. |
+| One-Click Setup | ✔️ | OneClick in `README.md` existiert und ist eingerichtet. |
+| Pull Request | ✔️ | Eigenes Projekt :) |
+
+---
+---
 
 ## Inhaltsverzeichnis
 
@@ -59,13 +58,15 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
 - [Docker](https://www.docker.com/)
 - [Visual Studio Code (VSCode)](https://code.visualstudio.com/)
 - [Dev Containers Extension für VSCode](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-- (optional) [Git](https://git-scm.com/downloads)
+- [Git](https://git-scm.com/downloads)
 
 ## Ablauf der Einrichtung
 
 0. **Editieren der `.env` Datei**
   
-  Bevor irgendetwas getan werden kann, muss die `.devcontainer/.env` editiert werden.
+    - Bevor irgendetwas getan werden kann, muss die `.devcontainer/.env` editiert werden.
+
+    - *Es befindet sich eine `.env` Beispielsdatei im `.devcontainer/`.*
 
 1. **Clone das Repository:**
 
@@ -85,163 +86,164 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
 3. **Erstelle die Datei `.devcontainer/devcontainer.json` mit folgendem Inhalt:**
 
     ```json
-    {
-        "name": "2048AI Dev Container",
-        "dockerComposeFile": "docker-compose.yml",
-        "service": "app",
-        "workspaceFolder": "/workspace",
-        "forwardPorts": [
-            8282,
-            8283,
-            8085,
-            3036
-        ],
-        "customizations": {
-            "vscode": {
-                "extensions": [
-                    "ms-python.python", // Python
-                    "yzhang.markdown-all-in-one", //Markdown
-                    "ms-toolsai.jupyter-renderers", //Jupyter Notebook
-                    "ms-python.black-formatter", // Python Formatter
-                    "GitHub.copilot", // Github-Copilot
-                    "ms-azuretools.vscode-docker", // Docker
-                    "p1c2u.docker-compose", // Docker-Compose
-                    "hediet.debug-visualizer" // Debug Visualizer
-                ],
-                "settings": {
-                    "python.pythonPath": "/usr/local/bin/python"
-                }
-            }
-        }
-    }
+      {
+          "name": "2048AI Dev Container",
+          "dockerComposeFile": "docker-compose.yml",
+          "service": "app",
+          "workspaceFolder": "/workspace",
+          "forwardPorts": [
+              8282,
+              8283,
+              8085,
+              3036
+          ],
+          "customizations": {
+              "vscode": {
+                  "extensions": [
+                      "ms-python.python", // Python
+                      "yzhang.markdown-all-in-one", //Markdown
+                      "ms-toolsai.jupyter-renderers", //Jupyter Notebook
+                      "ms-python.black-formatter", // Python Formatter
+                      "GitHub.copilot", // Github-Copilot
+                      "ms-azuretools.vscode-docker", // Docker
+                      "p1c2u.docker-compose", // Docker-Compose
+                      "hediet.debug-visualizer" // Debug Visualizer
+                  ],
+                  "settings": {
+                      "python.pythonPath": "/usr/local/bin/python"
+                  }
+              }
+          }
+      }
     ```
 
 4. **Erstelle die Datei `docker-compose.yml` im `.devcontainer`:**
 
-```yml
-  version: '3.8'
-  services:
-    app:
-      restart: always
-      build:
-        context: ..
-        dockerfile: .devcontainer/Dockerfile
+    ```yml
+      version: '3.8'
+      services:
+        app:
+          restart: always
+          build:
+            context: ..
+            dockerfile: .devcontainer/Dockerfile
+          volumes:
+            - workspace_volume:/workspace
+            - ..:/workspace/Local # Erlaubt editieren des Projektes ausserhalb des Dockers
+          ports:
+            - 8282:8282
+            - 8283:8283
+          environment:
+            - MYSQL_HOST=${MYSQL_HOST}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_DB=${MYSQL_DB}
+          depends_on:
+            - mysql
+          working_dir: /workspace
+
+        mysql:
+          image: mysql
+          restart: always
+          environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_DB=${MYSQL_DB}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+          ports:
+            - 3306:3306
+          volumes:
+            - mysql-data:/var/lib/mysql
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+        tool:
+          image: phpmyadmin
+          restart: always
+          ports:
+            - "8085:80"
+          environment:
+            - PMA_HOST=${MYSQL_HOST}
+            - PMA_USER=${MYSQL_USER}
+            - PMA_PASSWORD=${MYSQL_PASSWORD}
+          depends_on: 
+            - mysql
+
       volumes:
-        - workspace_volume:/workspace
-        - ..:/workspace/Local # Erlaubt editieren des Projektes ausserhalb des Dockers
-      ports:
-        - 8282:8282
-        - 8283:8283
-      environment:
-        - MYSQL_HOST=${MYSQL_HOST}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-        - MYSQL_DB=${MYSQL_DB}
-      depends_on:
-        - mysql
-      working_dir: /workspace
-
-    mysql:
-      image: mysql
-      restart: always
-      environment:
-        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-        - MYSQL_DB=${MYSQL_DB}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      ports:
-        - 3306:3306
-      volumes:
-        - mysql-data:/var/lib/mysql
-        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-
-    tool:
-      image: phpmyadmin
-      restart: always
-      ports:
-        - "8085:80"
-      environment:
-        - PMA_HOST=${MYSQL_HOST}
-        - PMA_USER=${MYSQL_USER}
-        - PMA_PASSWORD=${MYSQL_PASSWORD}
-      depends_on: 
-        - mysql
-
-  volumes:
-    mysql-data:
-    workspace_volume:
-```
+        mysql-data:
+        workspace_volume:
+    ```
 
 5. **Erstelle die Datei `Dockerfile` im `.devcontainer`:**
 
-```Dockerfile
-  # Verwenden eines Basisimages mit Python
-  FROM python:3.11-bookworm
+    ```Dockerfile
+      # Verwenden eines Basisimages mit Python
+      FROM python:3.11-bookworm
 
-  # Festlegen des Arbeitsverzeichnisses im Container
-  WORKDIR /workspace
+      # Festlegen des Arbeitsverzeichnisses im Container
+      WORKDIR /workspace
 
-  # Kopieren der Dateien in Container-Volume
-  COPY .devcontainer/requirements.txt /workspace/requirements.txt
-  COPY .devcontainer/.env /workspace/.env
-  COPY .gitignore /workspace/.gitignore
-  COPY db_test.py /workspace/
-  COPY README.md /workspace/README.md
-  COPY 2048_Project /workspace/2048_Project
-  COPY .devcontainer /workspace/.devcontainer
+      # Kopieren der Dateien in Container-Volume
+      COPY .devcontainer/requirements.txt /workspace/requirements.txt
+      COPY .devcontainer/.env /workspace/.env
+      COPY .gitignore /workspace/.gitignore
+      COPY db_test.py /workspace/
+      COPY README.md /workspace/README.md
+      COPY 2048_Project /workspace/2048_Project
+      COPY .devcontainer /workspace/.devcontainer
 
-  # Installieren der notwendigen Libraries
-  RUN pip install --upgrade pip
-  RUN pip install -r requirements.txt
-  RUN apt-get update && apt-get upgrade -y
+      # Installieren der notwendigen Libraries
+      RUN pip install --upgrade pip
+      RUN pip install -r requirements.txt
+      RUN apt-get update && apt-get upgrade -y
 
-  # Umgebungsvariablen setzen
-  ENV MYSQL_HOST=${MYSQL_HOST}
-  ENV MYSQL_USER=${MYSQL_USER}
-  ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
-  ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-  ENV MYSQL_DB=${MYSQL_DB}
+      # Umgebungsvariablen setzen
+      ENV MYSQL_HOST=${MYSQL_HOST}
+      ENV MYSQL_USER=${MYSQL_USER}
+      ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      ENV MYSQL_DB=${MYSQL_DB}
 
-  # Offene Ports
-  EXPOSE 8282
-  EXPOSE 8283
-  EXPOSE 3306
-  EXPOSE 8085
+      # Offene Ports
+      EXPOSE 8282
+      EXPOSE 8283
+      EXPOSE 3306
+      EXPOSE 8085
 
-  # Startbefehl
-  CMD ["tail", "-f", "/dev/null"]
-  # CMD ["python", "/workspace/Project/webgui/app.py"]
-```
+      # Startbefehl
+      CMD ["tail", "-f", "/dev/null"]
+      # CMD ["python", "/workspace/Project/webgui/app.py"]
+    ```
 
 6. **Erstelle die Datei `requirements.txt` im `.devcontainer`:**
 
     ```plaintext
-    numpy
-    tensorflow
-    flask
-    questionary
-    matplotlib
-    mysql
+      numpy
+      tensorflow
+      flask
+      questionary
+      matplotlib
+      mysql
+      mysql-connector-python
     ```
 
 ## Verzeichnisstruktur
 
 Stelle sicher, dass dein Projektverzeichnis wie folgt aussieht:
 
-```plaintext
-2048AI/
-├── .devcontainer/
-│  ├── devcontainer.json
-│  ├── Dockerfile
-│  ├── init.db # Datenbankstrukur
-│  ├── docker-compose.json
-│  ├── .env (Beispiel / Vorlage)
-│  ├── env-schema
-│  ├── requirements.txt
-├── 2048_Project/
-│  ├── (Projektdateien)
-└── (Repository Dateien)
-```
+    ```plaintext
+    2048AI/
+    ├── .devcontainer/
+    │  ├── devcontainer.json
+    │  ├── Dockerfile
+    │  ├── init.db
+    │  ├── docker-compose.json
+    │  ├── .env (Beispiel / Vorlage)
+    │  ├── env-schema
+    │  ├── requirements.txt
+    ├── 2048_Project/
+    │  ├── (Projektdateien)
+    └── (Repository Dateien)
+    ```
 
 ## Dev-Container Konfiguration
 
@@ -256,20 +258,57 @@ Die Datei `.devcontainer/devcontainer.json` definiert die Konfiguration des Dev-
 
 ## Nutzung des Dev-Containers
 
-**In Visual Studio Code**
+**Optional: Keyshortcuts:**
 
-1. **Öffne VSCode und lade das Projektverzeichnis `2048AI`.**
-2. **Klicke auf das grüne Symbol unten links in der Statusleiste (Open a Remote Window).**
-3. **Wähle `Reopen in Container`.**
+1. Öffne die Kommando-Palette mit `Ctrl+Shift+P` *(Windows/Linux)* oder `Cmd+Shift+P` *(Mac).*
+2. Suche nach `"Preferences: Open Keyboard Shortcuts (JSON)"` und wähle diese Option aus.
+3. Füge in der `keybindings.json` Datei den folgenden Eintrag hinzu:
 
-**In Github Codespaces**
+    ```json
+    {
+      "key": "alt+shift+o",
+      "command": "remote-containers.reopenInContainer"
+    }
+    ```
+---
 
-1. **Klicke den `Open in Codespaces` Button ganz oben.
+### **-- In Visual Studio Code**
+
+1. Öffne VSCode und lade das Projektverzeichnis `2048AI`.
+2. Klicke auf das grüne/blaue Symbol unten links in der Statusleiste `(Open a Remote Window)`.
+3. Wähle `Reopen in Container`.
+4. Während dem bauen des Conatiners, könnt ihr auf `View Container Logs` unten rechts anklicken um zu sehen wie der Devcontainer gebaut wird.
+
+---
+*Optional:*
+  - Jenachdem muss nach einer Änderung, der Container neu gebaut werden.
+  - Die nun folgenden Schritte zeigen, wie ihr den Container komplett neu bauen könnt.
+1. `Docker Desktop` öffnen, den Hauptcontainer *(Mit den 3 Projketcontainern)* stoppen und löschen.
+2. Ebenso die `Volumes` und `Images` die erstellt worden löschen.
+3. Devcontainer mit den oben genannten Schritten [In VSCode](#---in-visual-studio-code) ausführen.
+---
+### **-- In Github Codespaces**
+
+1. Klicke den `Open in Codespaces` Button ganz oben.
 
 
 VSCode startet nun den Dev-Container und installiert die notwendigen Abhängigkeiten gemäß der Datei `requirements.txt`.
+---
+### **-- Als fertiges Image**
 
-Ob im Browser oder als Anwendung :)
+1. Navigiere in einem **Terminal** in den `.devcontainer/` Ordner und führe:
+
+    ```bash
+    docker-compose build
+    ```
+
+2. Starte den *(Multi)*-Container:
+
+    ```bash
+    docker-compose up
+    ```
+
+3. Über `Docker-Desktop` wähle den Container der **App** aus und gehe auf `exec` um einen Befehl in dem Projektordner auszuführen.
 
 ## Ports
 
