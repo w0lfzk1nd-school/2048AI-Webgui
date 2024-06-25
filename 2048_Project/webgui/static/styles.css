@@ -1,0 +1,125 @@
+:root {
+    --background-color: #937676d3;
+    --text-color: #efd191d3;
+    --link-color: rgb(0, 221, 255);
+    --link-hover-color: #1e681e;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    --background-color: #312929;
+    --text-color: #fff;
+    --link-color: #ffc465;
+    --link-hover-color: #2ecc71;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    text-align: center;
+    margin-top: 15px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.board {
+    display: inline-block;
+    border: 2px solid var(--text-color);
+    margin-bottom: 20px;
+}
+
+.buttons {
+    margin-bottom: 20px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.buttons button {
+    margin: 10px;
+    padding: 10px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border: 2px solid var(--text-color);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.buttons button:hover {
+    background-color: var(--text-color);
+    color: var(--background-color);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border: 1px solid #ccc;
+    margin: 3px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: #a86b6b;
+    box-sizing: border-box;
+}
+
+/* Anpassungen für Dark Mode */
+body.dark-mode .cell {
+    background-color: #666;
+    color: #000000;
+    border-color: #a8a1a1;
+}
+
+/* Standard-Styling für Links */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+/* Farbänderung beim Hovern */
+a:hover {
+    color: var(--link-hover-color);
+}
+
+/* Light Mode */
+@media (prefers-color-scheme: light) {
+    :root {
+        --link-color: rgb(33, 135, 186);
+        --link-hover-color: #98FB98;
+        --background-color: #c6b1b1;
+        --text-color: #000;
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --link-color: #fffd75;
+        --link-hover-color: #2ecc71;
+        --background-color: #333;
+        --text-color: #fff;
+    }
+}
+
+.confidence-values {
+    margin-top: 10px;
+}
+
+.prediction-text {
+    margin-top: 10px;
+    font-weight: bold;
+}

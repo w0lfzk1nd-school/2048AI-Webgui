@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Game</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png">
+    <link rel="manifest" href="static/site.webmanifest">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+</head>
+
+<body onload="loadBoard()">
+    <div class="container">
+        <h1>2048 Game</h1>
+        <div class="info">
+            <p><a href="https://en.wikipedia.org/wiki/2048_(video_game)" target="_blank"><b>EN</b> Wikipedia
+                    Page</a><br><a href="https://de.wikipedia.org/wiki/2048_(Computerspiel)" target="_blank"><b>DE</b>
+                    Wikipedia Page</a>
+            </p>
+        </div>
+        <p>Use the Keys <b>'W', 'A', 'S' und 'D'</b> to play the game and reach a block with a score of 2048 to win!</p>
+        <p>Verwende <b>'W', 'A', 'S' und 'D'</b> um die Blöcke in eine Richtung zu verschieben und Blöcke mit dem selben
+            Wert zu kombinieren.<br>Erreiche einen Block mit dem Wert 2048 und du hast gewonnen!<br><i>"Scroll down for
+                more Info and more Buttons."</i></p>
+        <button onclick="toggleDarkMode()">Toggle Color Mode</button>
+        <hr>
+        <p id="session-key">Session Key: <span id="key-value"></span></p>
+        <p id="moves-count">Total Moves Learned: 0</p>
+        <p id="glob-highscore">Global Highscore: 0</p>
+        <p id="glob-bestblock">Global best Block: 0</p>
+        <p id="player-score">Your Player Points: 0 | Best-Block: [ 0 ]</p>
+        <p>[ Algorithm Prediction (Scroll down) ]</p>
+        <div id="prediction-result" class="prediction-text"><b>-- Ready --</b></div>
+        <hr>
+        <div id="board" class="board"></div>
+        <div id="buttons" class="buttons">
+            <div class="button-row">
+                <button onclick="makeMove(0)">Up (W)</button>
+            </div>
+            <div class="button-row">
+                <button onclick="makeMove(1)">Left (A)</button>
+                <button onclick="makeMove(2)">Down (S)</button>
+                <button onclick="makeMove(3)">Right (D)</button>
+            </div>
+            <hr>
+            <p><b>-- Misc Buttons --</b></p>
+            <div class="button-row">
+                <button onclick="resetGame()">Reset Game</button>
+                <button onclick="predictMove()">Predict Move</button>
+            </div>
+            <hr>
+            <p><b>-- Predict next move --</b><br><i>Bitte gedulig sein, dies ist eine grössere Berrechnung!<br>Please be
+                    patient with this option, this is a bigger calculation!</i></p>
+            <div class="button-row">
+                <label>
+                    <input type="checkbox" id="auto-predict"> Auto Predict
+                </label>
+            </div>
+        </div>
+        <hr>
+        <div class="confidence-values">
+            <p><b>-- Monte Carlo Algorithm Log --</b></p>
+            <p><i>"Simulation of ~10'000 Turns" // "~10'000 simulierte Spielzüge"</i></p>
+            <ul id="confidence-list"></ul>
+        </div>
+        <hr>
+        <div class="description">
+            <p><b>Auto Predict</b></p>
+            <p><b>Algorithm Highscore:</b> (Games: 31) <i>32'640 Points | [ 2'048 Block ]</i></p>
+            <p><b>Wiki:</b> <a href="https://en.wikipedia.org/wiki/Monte_Carlo_tree_search" target="_blank">Wiki Page
+                    EN</a> | <a href="https://de.wikipedia.org/wiki/Monte-Carlo-Algorithmus" target="_blank">Wiki Page
+                    DE</a><br></p>
+            <p>Ein implementierter <b>Monte Carlo Searchtree Algorithmus</b> ermittelt den nächst besten Zug.<br>Dies
+                berechnet die nächsten 10'000 Züge und wählt den höchsten Endscore, welcher erreicht werden kann.<br>Das
+                braucht ein paar Sekunden, bitte habt Geduld!</p>
+            <p>A <b>Monte Carlo Searchtree</b> algorithm calculates the highest possible score for the next 10'000 moves
+                and suggests it.<br>This takes a few seconds, please be patient!</p>
+        </div>
+        <hr>
+        <div class="description">
+            <p><b>Verwendung:</b></p>
+            <p>Diese temporäre WebApp dient zur Erfassung von menschlichen Entscheidungen, um ein simples <i>Keras
+                    AI</i><br>zu trainieren, das Spiel zu verstehen und zu selbst spielen. Es werden ausschließlich
+                Spielzustände gespeichert.</p>
+            <p><b>Usage:</b></p>
+            <p>This temporary web app is used to record human decisions to train a simple <i>Keras model</i> to
+                understand and play the game. Only game states are saved.</p>
+        </div>
+        <p><b>[ Betreiber / Operator]</b></p>
+        <p><i>"A small blogpost about this may come in the future."</i></p>
+        <p><i>"Ein kleiner Blogpost dieses Projektes kommt vielleicht in der zukunft."</i></p>
+        <p>Visit the <a href="https://www.w0lfzk1nd.com" target="_blank">Main Website</a>.</p>
+        <p>Thanks too all, who participate here.</p>
+    </div>
+
+    <script src="static/script.js"></script>
+    <script>
+        window.onload = function () {
+            initializeSession();
+            loadScore();
+            loadBoard();
+            loadMovesCount();
+        };
+    </script>
+</body>
+
+</html>
