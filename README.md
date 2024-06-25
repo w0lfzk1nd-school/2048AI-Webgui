@@ -2,9 +2,13 @@
 
 ![WebGui](2048ai_webgui.PNG "WebGui")
 
-**Automatic DevContainer**
+## Automatic DevContainer
 
-[![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=w0lfzk1nd-school/2048AI-Webgui)
+**Open in Codespaces**
+
+[![Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=w0lfzk1nd-school/2048AI-Webgui)
+
+**Open in VS-Code**
 
 [![Open in VS Code](https://xebia.com/wp-content/uploads/2023/11/v1.svg)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/w0lfzk1nd-school/2048AI-Webgui.git)
 ---
@@ -32,28 +36,35 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 ## Inhaltsverzeichnis
 
 - [2048AI Dev Container](#2048ai-dev-container)
+  - [Automatic DevContainer](#automatic-devcontainer)
+  - [](#)
   - [Dokumentation Inhalt Dev-Container:](#dokumentation-inhalt-dev-container)
   - [Inhaltsverzeichnis](#inhaltsverzeichnis)
-  - [Voraussetzungen](#voraussetzungen)
+  - [Voraussetzungen Devcontainer](#voraussetzungen-devcontainer)
   - [Ablauf der Einrichtung](#ablauf-der-einrichtung)
   - [Verzeichnisstruktur](#verzeichnisstruktur)
   - [Dev-Container Konfiguration](#dev-container-konfiguration)
   - [Nutzung des Dev-Containers](#nutzung-des-dev-containers)
+    - [-- In Visual Studio Code](#---in-visual-studio-code)
+    - [-- In Github Codespaces](#---in-github-codespaces)
+    - [-- Als fertiges Image](#---als-fertiges-image)
   - [Ports](#ports)
   - [VSCode Erweiterungen](#vscode-erweiterungen)
   - [Bekannte Probleme](#bekannte-probleme)
 - [**2048 AI Projekt**](#2048-ai-projekt)
   - [**Struktur**](#struktur)
   - [**Benutzung**](#benutzung)
+  - [Installation und Nutzung ohne Conatiner / Docker](#installation-und-nutzung-ohne-conatiner--docker)
       - [**WebGui**](#webgui)
       - [**Modell-Training und Dataset-Tools**](#modell-training-und-dataset-tools)
       - [**Datasets Struktur**](#datasets-struktur)
     - [**WebGui**](#webgui-1)
     - [**Keras Modell Training**](#keras-modell-training)
 - [Zusammenfassung](#zusammenfassung)
-  
 
-## Voraussetzungen
+---
+
+## Voraussetzungen Devcontainer
 
 Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechner installiert sind:
 
@@ -274,7 +285,7 @@ Die Datei `.devcontainer/devcontainer.json` definiert die Konfiguration des Dev-
     ```
 ---
 
-### **-- In Visual Studio Code**
+### -- In Visual Studio Code
 
 1. Öffne VSCode und lade das Projektverzeichnis `2048AI`.
 2. Klicke auf das grüne/blaue Symbol unten links in der Statusleiste `(Open a Remote Window)`.
@@ -289,14 +300,17 @@ Die Datei `.devcontainer/devcontainer.json` definiert die Konfiguration des Dev-
 2. Ebenso die `Volumes` und `Images` die erstellt worden löschen.
 3. Devcontainer mit den oben genannten Schritten [In VSCode](#---in-visual-studio-code) ausführen.
 ---
-### **-- In Github Codespaces**
+### -- In Github Codespaces
 
-1. Klicke den `Open in Codespaces` Button ganz oben.
+1. Klicke den `Open in Codespaces` Button ganz oben. *-- (Browser Instanz für **VS-Code**)*
+2. Klicke den `Open in VS-Code` Button ganz oben. *-- (Browser Instanz für **VS-Code**)*
 
 
 VSCode startet nun den Dev-Container und installiert die notwendigen Abhängigkeiten gemäß der Datei `requirements.txt`.
+
 ---
-### **-- Als fertiges Image**
+
+### -- Als fertiges Image
 
 1. Navigiere in einem **Terminal** in den `.devcontainer/` Ordner und führe:
 
@@ -376,18 +390,56 @@ Dieses Projekt umfasst folgendes:
 ---
 ## **Benutzung**
 
+---
+
+## Installation und Nutzung ohne Conatiner / Docker
+
+*Dieses Projekt ist ein **Sandkasten**. Und gleichzeitig eine Aufgabe für **Container**. Dieses Webgui wird in fertiger Form auf [meinem persönlichen Github](https://github.com/w0lfzk1n) erscheinen.*
+
+1. Erstelle einen Ordner auf deinem Computer für das Projekt. Z.b: `Documents/Scripts/2048AI/`
+2. Öffne in diesem Ordner ein Kommandofenster.
+   1. *Klicke oben in das Fenster wo der Pfad angezeigt wird und gebe `cmd` ein.*
+3. Stelle sicher dass du `Python3` und `pip` installiert hast.
+   1. **Python3 Windows:** Gebe in der Konsole `python3` ein. Der Microsoft-Market sollte sich automatisch öffnen.
+   2. **Pip Windows:**
+      1. Im Konsolenfenster: `curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py`
+   3. **Python3 & pip Linux:** [GeeksForGeeks.org](https://www.geeksforgeeks.org/how-to-install-pip-in-linux/)
+4. Prüfe deine Installationen:
+   1. `python3 --version`
+   2. `pip3 --version`
+5. Installiere die notwendigen Pakete:
+   1. `pip install -r .devcontainer/requirements.txt`
+6. Starte das WebGUI:
+   1. `cd 2048_Project/webgui && python3 app.py`
+
+**Sobald dieses Projekt die Datenbank im WebGUI integriert hat, muss dieses Projekt als Docker verwendet werden müssen.**
+
+---
+
 #### **WebGui**
 
 Das WebGui startet man mit:
+```bash
+bash run_webgui.sh
 ```
-python3 webgui/app.py
+
+oder
+
+```bash
+cd 2048_Project/webgui && python3 app.py
 ```
 
 #### **Modell-Training und Dataset-Tools**
 
 Das Konsolenmenü für das Training und vorbereitung/verarbeitung der gesammelten Daten/Datasets startet man mit:
+```bash
+bash run_mainmenu.sh
 ```
-python3 main.py
+
+oder
+
+```bash
+cd 2048_Project && python3 main.py
 ```
 
 #### **Datasets Struktur**
