@@ -10,3 +10,6 @@ MYSQL_PASSWORD:
 MYSQL_DB:
   description: "The database name for the MySQL server"
   required: true
+MYSQL_ROOT_PASSWORD:
+  description: "The passwort for root user"
+  required: true
