@@ -9,6 +9,9 @@ services:
       dockerfile: .devcontainer/Dockerfile
     volumes:
       - workspace_volume:/workspace
+      - ../2048_Project/webgui/datasets:/workspace/2048_Project/webgui/datasets # Mounte Ordner für WebGUI Datasets
+      - ../2048_Project/webgui/datasets:/workspace/2048_Project/datasets # Mounte Ordner für Datasets
+      - ../2048_Project/webgui/datasets:/workspace/2048_Project/saves # Mounte Ordner für Modelle
       - ..:/workspace/Local # Erlaubt editieren des Projektes ausserhalb des Dockers
     ports:
       - 8282:8282
