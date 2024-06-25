@@ -37,7 +37,6 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 
 - [2048AI Dev Container](#2048ai-dev-container)
   - [Automatic DevContainer](#automatic-devcontainer)
-  - [](#)
   - [Dokumentation Inhalt Dev-Container:](#dokumentation-inhalt-dev-container)
   - [Inhaltsverzeichnis](#inhaltsverzeichnis)
   - [Voraussetzungen Devcontainer](#voraussetzungen-devcontainer)
