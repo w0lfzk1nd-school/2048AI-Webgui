@@ -6,7 +6,7 @@
 
 [![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=w0lfzk1nd-school/2048AI-Webgui)
 
-[![Open in Remote - Containers](https://xebia.com/wp-content/uploads/2023/11/v1.svg)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/w0lfzk1nd-school/2048AI-Webgui.git)
+[![Open in VS Code](https://img.shields.io/badge/Open%20in%20VS%20Code-blue?logo=visualstudiocode)](vscode://vscode-remote/clone?url=https://github.com/w0lfzk1nd-school/2048AI-Webgui)
 
 https://github.com/w0lfzk1nd-school/2048AI-Webgui.git
 
