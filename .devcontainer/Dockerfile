@@ -32,5 +32,5 @@ EXPOSE 3306
 EXPOSE 8085
 
 # Startbefehl
-# CMD ["tail", "-f", "/dev/null"]
-CMD ["bash", "run_webgui.sh", "&&", "tail", "-f", "/dev/null"]
+CMD ["tail", "-f", "/dev/null"]
+# CMD ["bash", "run_webgui.sh", "&&", "tail", "-f", "/dev/null"]
