@@ -222,8 +222,9 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
       EXPOSE 8085
 
       # Startbefehl
+      # In der .devcontainer/Dockerfile kommentieren und unteren auskommentieren um das WebGUI automatisch zu starten.
       CMD ["tail", "-f", "/dev/null"]
-      # CMD ["python", "/workspace/Project/webgui/app.py"]
+      # CMD ["bash", "run_webgui.sh", "&&", "tail", "-f", "/dev/null"]
     ```
 
 6. **Erstelle die Datei `requirements.txt` im `.devcontainer`:**
@@ -250,6 +251,7 @@ Stelle sicher, dass dein Projektverzeichnis wie folgt aussieht:
     │  ├── init.db
     │  ├── docker-compose.json
     │  ├── .env (Beispiel / Vorlage)
+    │  ├── .env_EXAMPLE (Beispiel / Vorlage)
     │  ├── env-schema
     │  ├── requirements.txt
     ├── 2048_Project/
