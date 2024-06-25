@@ -8,22 +8,29 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 
 ## Dokumentation Inhalt Dev-Container:
 - DevContainer_README.md --> **vorhanden**
-- Automatisierte Installation Abhängikeiten --> **requirements.txt vorhanden**
+- Automatisierte Installation Abhängikeiten --> **vorhanden**
+    - *`requirements.txt` und `apt update` vorhanden.*
 - Nützliche Extensions --> **vorhanden**
-- Debugging-Unterstützung --> ?
-- Datenbankintegration --> ? (Für highscores bzw runtime data maybe?)
+    - *Liste unten vorhanden.*
+- Debugging-Unterstützung --> **vorhanden**
+    - *Devcontainer gibt debugging aus.*
+- Datenbankintegration --> ? **vorhanden**
+    - *Datenbank Container wird eingerichtet, im Projekt derzeit nicht verwendet.*
 - Produktionsbereite Container --> **vorhanden**
+    - *Alles für den Devcontainer `devcontainer.json`, `docker-compose.yml` und `Dockerfile` erstellt.*
 - Sicheres Handling sensibler Daten --> **vorhanden**
-- Demodaten --> ?
+    - `.env` Datei erstellt und in `.gitignore` erwähnt.
+- Demodaten --> **vorhanden**
+    - `db_test.py` zum Testen der Datenbankfunktion vorhanden.*
 - Alternativlösung --> ?
 - One-Click Setup --> **Codespace vorhanden**
+    - *OneClick in `README.md` existiert und ist eingerichtet.*
 - Pull Request --> **Eigenes Projekt**
 
 
 ## Inhaltsverzeichnis
 
 - [2048AI Dev Container](#2048ai-dev-container)
-  - [](#)
   - [Dokumentation Inhalt Dev-Container:](#dokumentation-inhalt-dev-container)
   - [Inhaltsverzeichnis](#inhaltsverzeichnis)
   - [Voraussetzungen](#voraussetzungen)
@@ -60,14 +67,14 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
   
   Bevor irgendetwas getan werden kann, muss die `.devcontainer/.env` editiert werden.
 
-*Dies muss in dieser Repo nicht nochmals wiederholt werden*
-
 1. **Clone das Repository:**
 
     ```bash
     git clone https://github.com/w0lfzk1nd-school/2048AI-Webgui.git
     cd 2048AI-Webgui
     ```
+
+*Alles nachfolgende muss in dieser Repo **nicht** nochmals wiederholt werden*
 
 2. **Erstelle das Verzeichnis `.devcontainer`:**
 
@@ -78,11 +85,8 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
 3. **Erstelle die Datei `.devcontainer/devcontainer.json` mit folgendem Inhalt:**
 
     ```json
-    // For format details, see https://aka.ms/devcontainer.json. For config options, see the
-    // README at: https://github.com/devcontainers/templates/tree/main/src/python
     {
         "name": "2048AI Dev Container",
-        // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
         "dockerComposeFile": "docker-compose.yml",
         "service": "app",
         "workspaceFolder": "/workspace",
@@ -92,10 +96,6 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
             8085,
             3036
         ],
-        // Use 'postCreateCommand' to run commands after the container is created.
-        // "postCreateCommand": "pip install --upgrade pip && pip install -r /workspace/.devcontainer/requirements.txt",
-        
-        // Configure tool-specific properties.
         "customizations": {
             "vscode": {
                 "extensions": [
@@ -202,7 +202,7 @@ Bevor du beginnst, stelle sicher, dass die folgenden Programme auf deinem Rechne
   ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
   ENV MYSQL_DB=${MYSQL_DB}
 
-  # Offene Ports für Flask
+  # Offene Ports
   EXPOSE 8282
   EXPOSE 8283
   EXPOSE 3306
@@ -233,6 +233,7 @@ Stelle sicher, dass dein Projektverzeichnis wie folgt aussieht:
 ├── .devcontainer/
 │  ├── devcontainer.json
 │  ├── Dockerfile
+│  ├── init.db # Datenbankstrukur
 │  ├── docker-compose.json
 │  ├── .env (Beispiel / Vorlage)
 │  ├── env-schema
@@ -241,7 +242,6 @@ Stelle sicher, dass dein Projektverzeichnis wie folgt aussieht:
 │  ├── (Projektdateien)
 └── (Repository Dateien)
 ```
-
 
 ## Dev-Container Konfiguration
 
@@ -252,7 +252,6 @@ Die Datei `.devcontainer/devcontainer.json` definiert die Konfiguration des Dev-
 - **Service**: Setzt den Namen für den Service des Devcontainers innerhalb der Compose.
 - **Arbeitsverzeichnis**: Setzt das Arbeitsverzeichnis im Container auf `/workspace`.
 - **Portweiterleitung**: Leitet die Ports 8282, 8283 und 8085 vom Container an den Host weiter.
-- **Post Create Command**: Installiert die Python-Abhängigkeiten nach dem Erstellen des Containers.
 - **VSCode-Erweiterungen**: Installiert die Python- und weitere Erweiterungen.
 
 ## Nutzung des Dev-Containers
