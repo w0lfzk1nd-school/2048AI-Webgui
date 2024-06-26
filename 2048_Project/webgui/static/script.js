@@ -246,7 +246,8 @@ function checkHighscore(score, block) {
     fetch('/api/get_highscore')
         .then(response => response.json())
         .then(highscoreData => {
-            if (score == highscoreData[1]) {
+            const lowestTop10Score = highscoreData.lowest_top10_score;
+            if (score > lowestTop10Score) {
                 if (!currentHighscoreSet) {
                     const uname = prompt("Congratulations! You set a new highscore! Please enter your username:");
                     if (uname && uname.length <= 20) {
@@ -261,6 +262,7 @@ function checkHighscore(score, block) {
             }
         });
 }
+
 
 function saveHighscore(uname, score, block) {
     fetch('/api/add_highscore', {

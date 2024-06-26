@@ -122,8 +122,10 @@ def index():
 
 @app.route("/api/get_highscore", methods=["GET"])
 def handle_leaderboard():
-    leaderboard_data = get_webgui_high()
-    return jsonify(leaderboard_data[0])
+    highscore_data = get_webgui_high()
+    leaderboard = get_leaderboard()
+    return jsonify({"current_highscore": highscore_data[0], "lowest_top10_score": leaderboard[-1][3] if leaderboard else 0})
+
 
 @app.route("/api/get_leaderboard", methods=["GET"])
 def get_leader():
@@ -138,26 +140,33 @@ def add_highscore():
     score = data.get('score')
     block = data.get('block')
     
-    # Check if the username already exists
-    existing_user = db_handler.handle_db('select', 'web_leaderboard', condition=f'uname = "{uname}"')
-    
-    if existing_user:
-        # Update the existing highscore
-        db_handler.handle_db(
-            'update', 
-            'web_leaderboard', 
-            data={"time": current_time, "score": score, "block": block}, 
-            condition=f'uname = "{uname}"'
-        )
+    # Check the current top 10 scores
+    leaderboard = get_leaderboard()
+    if len(leaderboard) < 10 or score > leaderboard[-1]['score']:
+
+        existing_user = db_handler.handle_db('select', 'web_leaderboard', condition=f'uname = "{uname}"')
+        if existing_user:
+            # Update the existing highscore
+            db_handler.handle_db(
+                'update', 
+                'web_leaderboard', 
+                data={"time": current_time, "score": score, "block": block}, 
+                condition=f'uname = "{uname}"'
+            )
+        else:
+            # Insert a new highscore
+            db_handler.handle_db(
+                'insert', 
+                'web_leaderboard', 
+                data={"time": current_time, "uname": uname, "score": score, "block": block}
+            )
+
+        leaderboard = get_leaderboard()
+
+        return jsonify({"status": "success"})
     else:
-        # Insert a new highscore
-        db_handler.handle_db(
-            'insert', 
-            'web_leaderboard', 
-            data={"time": current_time, "uname": uname, "score": score, "block": block}
-        )
-    
-    return jsonify({"status": "success"})
+        return jsonify({"status": "not_in_top_10"})
+
 
 
 @app.route('/api/update_highscore', methods=['POST'])
