@@ -381,9 +381,10 @@ Viel Spaß beim Entwickeln mit deinem 2048AI Dev-Container!
 Vor ein paar Jahren habe ich das simple Handyspiel entdeckt und war von der Komplexität begeistert. Nun, ein paar Jahre später, hab ich mich mehr mit AI oder generell neuronalen Netzwerken beschäftigt und beherrschte mehrere Programmiersprachen, darunter Python.
 
 Dieses Projekt umfasst folgendes:
-- DevContainer.
-- WebGui für Trainingdata erfassung.
-- Simples Konsoleninterface um ein Keras Modell mit *Tensorflow* zu trainieren und die gesammelten Daten in ein brauchbares Dataset umformatieren.
+  - Container mit Entwicklungsumgebung.
+  - Fertige Files um Container für das WebGUI zu bauen.
+  - WebGui für Trainingdata Erfassung.
+  - Simples Konsoleninterface um ein Keras Modell mit *Tensorflow* zu trainieren und die gesammelten Daten in ein brauchbares Dataset umformatieren.
 
 **Das Projekt ist noch in der Entwicklungsphase!**
 
@@ -483,7 +484,8 @@ Das WebGui wurde entwickelt, um Spielzüge und Spielzustände von echten Mensche
 
 Es nutzt eine MySQL Datenbank um die Highscores zu zählen und das Leaderboard zu speichern.
 
-Das Leaderboard wird derzeit noch nicht im WebGUI verarbeitet, besteht jedoch in der Datenbank.
+Im Leaderboard können Benutzer ihre bestehenden Einträge aktualisieren wenn sie einen neuen Rekord aufstellen.
+- *Hier ist es möglich, dass andere Spieler fremde Einträge mit ihrem Stand überschreiben. Ein Verifizierungssystem für die Einträge anhand `Cookie-Session-Data` werde ich nicht integrieren.*
 
 Trianingsdaten werden derzeit noch als `JSON` abgespeichert, wobei ebenso in der Datenbank bereits Tabellen erstellt wurden. 
 
