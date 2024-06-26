@@ -29,20 +29,13 @@ function showConfirmation() {
     };
 };
 
-function getUserInput() {
-    let userInput = prompt("Enter your Username:");
-    if (userInput !== null && userInput.length <= 20) {
-        document.getElementById("user_input").value = userInput;
-        document.getElementById("inputForm").submit();
-    }
-}
-
 function loadLeaderboard() {
     fetch('/api/get_leaderboard')
         .then(response => response.json())
         .then(data => {
             const leaderboardList = document.getElementById('leaderboard-list');
             leaderboardList.innerHTML = '';
+            console.log(data)
             data.forEach(entry => {
                 const listItem = document.createElement('li');
                 const formattedTime = new Date(entry[1]).toLocaleString();
@@ -183,6 +176,7 @@ function makeMove(direction) {
             loadScore();
             loadBoard();
             loadMovesCount();
+            //loadLeaderboard()
             const autoPredictCheckbox = document.getElementById('auto-predict');
             if (autoPredictCheckbox && autoPredictCheckbox.checked && !data.game_over) {
                 setTimeout(() => {
@@ -210,7 +204,6 @@ function checkHighscore(score, block) {
     fetch('/api/get_highscore')
         .then(response => response.json())
         .then(highscoreData => {
-            //const uname = prompt("Congratulations! You set a new highscore! Please enter your username:");
             if (score == highscoreData[1]) {
                 if (!currentHighscoreSet) {
                     const uname = prompt("Congratulations! You set a new highscore! Please enter your username:");
@@ -270,7 +263,6 @@ function updateHighscore(uname, score, block) {
         })
         .then(data => {
             if (data.status === 'success') {
-                alert("Your highscore has been updated!");
                 loadLeaderboard();
             } else {
                 alert("Failed to update highscore.");
