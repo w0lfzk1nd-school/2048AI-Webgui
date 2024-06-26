@@ -2,3 +2,4 @@
 logs/*
 .devcontainer/.env
 */.env
+2048_Project/webgui/datasets/*.json
