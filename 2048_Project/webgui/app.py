@@ -277,7 +277,7 @@ def make_move(direction):
         ]
     if not np.array_equal(old_board, game.board):
         moves.append([board_list, direction])
-
+        db_handler.handle_db("update", "webgui", {'steps_played': int(len(moves) + webgui_db[0][0])})
         if move_file == "":
             move_file = f"datasets/side_session_moves.json"
 
