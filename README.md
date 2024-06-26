@@ -2,6 +2,10 @@
 
 ![WebGui](2048ai_webgui.PNG "WebGui")
 
+** --> Funktionierendes Leaderboard**
+
+![WebGui Leaderboard](2048ai_webgui_leaderboard.PNG "WebGui Leaderboard")
+
 ## Automatic DevContainer
 
 **Open in Codespaces**
