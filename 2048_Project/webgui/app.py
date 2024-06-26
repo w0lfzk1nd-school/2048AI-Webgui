@@ -82,7 +82,7 @@ def get_webgui_high():
     return db_handler.handle_db('select', 'webgui')
 
 def get_leaderboard():
-    return db_handler.handle_db('select', 'web_leaderboard', None, "ORDER BY score DESC")
+    return db_handler.handle_db('select', 'web_leaderboard', None, "ORDER BY score DESC LIMIT = 10")
 
 def add_move_to_json(file_path, board, action):
     try:
