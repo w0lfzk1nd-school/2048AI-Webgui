@@ -41,6 +41,14 @@ Dies ist eine Entwicklungsumgebung für das `2048AI` Projekt. Diese Umgebung ver
 
 ---
 
+## Hinweis:
+
+Das Container Image, definiert in der `.devcontainer/Dockerfile`, ist standartmässig eingestellt automatisch das `WebGUI` zu starten.
+
+Für die Verwendung des Containers als `Developer Container` bitte **Zeile 35** in `.devcontainer/Dockerfile` auskommentieren und **Zeile 36** kommentieren.
+
+Dann den Deveolper Container bauen.
+
 ## Inhaltsverzeichnis
 
 - [2048AI Dev Container](#2048ai-dev-container)
