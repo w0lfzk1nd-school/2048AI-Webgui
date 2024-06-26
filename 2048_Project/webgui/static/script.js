@@ -1,6 +1,8 @@
 let isPredicting = false;
 let win_confirm = false;
 let game_over = false;
+let currentHighscoreSet = false;
+let currentUsername = '';
 
 function genPredictionTxt() {
     const texts = ["Writing down pi", "Brewing coffee", "Sorting braincells", "Predicting", "Reading future", "Processing", "Working", "Running", "Simulating", "Doing magic", "Redefining sience", "Doing math", "Adding a lot of numbers", "Shifting tiles", "Calculating moves", "Multiplying tiles", "Crushing numbers",
@@ -26,6 +28,33 @@ function showConfirmation() {
         return false;
     };
 };
+
+function getUserInput() {
+    let userInput = prompt("Enter your Username:");
+    if (userInput !== null && userInput.length <= 20) {
+        document.getElementById("user_input").value = userInput;
+        document.getElementById("inputForm").submit();
+    }
+}
+
+function loadLeaderboard() {
+    fetch('/api/get_leaderboard')
+        .then(response => response.json())
+        .then(data => {
+            const leaderboardList = document.getElementById('leaderboard-list');
+            leaderboardList.innerHTML = '';
+            data.forEach(entry => {
+                const listItem = document.createElement('li');
+                const formattedTime = new Date(entry[1]).toLocaleString();
+                listItem.textContent = `${formattedTime} | ${entry[2]} | ${format_num(parseInt(entry[3]))} | ${format_num(parseInt(entry[4]))}`;
+                leaderboardList.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading leaderboard:', error);
+        });
+}
+
 
 function loadMovesCount() {
     fetch('/api/moves')
@@ -156,7 +185,6 @@ function makeMove(direction) {
             loadScore();
             loadBoard();
             loadMovesCount();
-
             const autoPredictCheckbox = document.getElementById('auto-predict');
             if (autoPredictCheckbox && autoPredictCheckbox.checked && !data.game_over) {
                 setTimeout(() => {
@@ -174,7 +202,85 @@ function makeMove(direction) {
             if (data.game_over) {
                 game_over = true
                 alert("Game Over!");
+            } else {
+                checkHighscore(data.score, data.block)
             }
+        });
+}
+
+function checkHighscore(score, block) {
+    fetch('/api/get_highscore')
+        .then(response => response.json())
+        .then(highscoreData => {
+            //const uname = prompt("Congratulations! You set a new highscore! Please enter your username:");
+            if (score == highscoreData[1]) {
+                if (!currentHighscoreSet) {
+                    const uname = prompt("Congratulations! You set a new highscore! Please enter your username:");
+                    if (uname && uname.length <= 20) {
+                        currentUsername = uname;
+                        currentHighscoreSet = true;
+                        saveHighscore(currentUsername, score, block);
+                        alert("Your highscore has been saved!");
+                    }
+                } else {
+                    updateHighscore(currentUsername, score, block);
+                }
+            }
+        });
+}
+
+function saveHighscore(uname, score, block) {
+    fetch('/api/add_highscore', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({uname: uname, score: score, block: block })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                loadLeaderboard();
+            } else {
+                alert("Failed to save highscore.");
+            }
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert("There was an error saving your highscore. Please try again.");
+        });
+}
+
+function updateHighscore(uname, score, block) {
+    fetch('/api/update_highscore', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ uname: uname, score: score, block: block })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                alert("Your highscore has been updated!");
+                loadLeaderboard();
+            } else {
+                alert("Failed to update highscore.");
+            }
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert("There was an error updating your highscore. Please try again.");
         });
 }
 
@@ -196,6 +302,7 @@ function resetGame() {
             .then(() => {
                 loadBoard();
                 loadMovesCount();
+                loadLeaderboard();
             });
     }
 }

@@ -48,7 +48,7 @@ class DatabaseHandler:
                 return result
 
             self.connection.commit()
-            print("Query executed successfully")
+            print(f"Query executed successfully: {query}")
 
         except Error as e:
             print("Error executing query:", e)
@@ -70,7 +70,9 @@ class DatabaseHandler:
 
         elif action == "select":
             query = f"SELECT * FROM {table}"
-            if condition:
+            if condition and "ORDER BY" in condition:
+                query += f" {condition}"
+            elif condition:
                 query += f" WHERE {condition}"
             return query, None
 
@@ -95,6 +97,7 @@ class DatabaseHandler:
         query, values = self.build_query(action, table, data, condition)
         if query:
             result = self.execute_query(query, values)
+            print(result)
             return result
         else:
             print("Invalid query")

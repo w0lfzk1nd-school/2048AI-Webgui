@@ -69,6 +69,12 @@
             <ul id="confidence-list"></ul>
         </div>
         <hr>
+        <div class="webgui-leaderboard">
+            <p><b>-- Player Leaderboard --</b></p>
+            <p><i>- - - - - - - - - - - - - - - - - - - - - - -</i><br>Datum   |    User    |   Score   | BestBlock     |</p>
+            <ul id="leaderboard-list"></ul>
+        </div>
+        <hr>
         <div class="description">
             <p><b>Auto Predict</b></p>
             <p><b>Algorithm Highscore:</b> (Games: 31) <i>32'640 Points | [ 2'048 Block ]</i></p>
@@ -105,6 +111,7 @@
             loadScore();
             loadBoard();
             loadMovesCount();
+            loadLeaderboard()
         };
     </script>
 </body>

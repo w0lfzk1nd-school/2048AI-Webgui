@@ -6,6 +6,7 @@ import numpy as np
 import uuid
 import os
 import sys
+from datetime import datetime
 from threading import Lock
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -30,7 +31,7 @@ setup_logging("flask")
 db_handler = DatabaseHandler()
 
 webgui_db = db_handler.handle_db('select', 'webgui')
-webgui_leaderboard = db_handler.handle_db("select", "web_leaderboard")
+webgui_leaderboard = db_handler.handle_db('select', 'web_leaderboard')
 
 app.secret_key = os.urandom(24)
 moves = []
@@ -77,6 +78,12 @@ def get_highscore():
     return {"high": total_highscore, "block": total_bestblock}
 
 
+def get_webgui_high():
+    return db_handler.handle_db('select', 'webgui')
+
+def get_leaderboard():
+    return db_handler.handle_db('select', 'web_leaderboard', None, "ORDER BY score DESC")
+
 def add_move_to_json(file_path, board, action):
     try:
         with open(file_path, "r") as file:
@@ -97,9 +104,11 @@ def add_move_to_json(file_path, board, action):
     with open(file_path, "w") as file:
         json.dump(moves, file)
 
+
 def monte_predict_wrapper(board, steps, output_queue):
     result = monte_predict(board, steps)
     output_queue.put(result)
+
 
 # === App Routes
 
@@ -108,6 +117,44 @@ def monte_predict_wrapper(board, steps, output_queue):
 def index():
     return render_template("index.html")
 
+
+@app.route("/api/get_highscore", methods=["GET"])
+def handle_leaderboard():
+    leaderboard_data = get_webgui_high()
+    return jsonify(leaderboard_data[0])
+
+@app.route("/api/get_leaderboard", methods=["GET"])
+def get_leader():
+    leaderboard_data = get_leaderboard()
+    return jsonify(leaderboard_data)
+
+@app.route('/api/add_highscore', methods=['POST'])
+def add_highscore():
+    data = request.get_json()
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    uname = data.get('uname')
+    score = data.get('score')
+    block = data.get('block')
+    try:
+        db_handler.handle_db('insert', 'web_leaderboard', {"time": current_time, "uname": uname, "score": score, "block": block})
+        return jsonify({"status": "success"})
+    except Exception as e:
+        print(f"Leaderbaord Error: {e}")
+        return jsonify({"status": "failed"})
+
+@app.route('/api/update_highscore', methods=['POST'])
+def update_highscore():
+    data = request.get_json()
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    uname = data.get('uname')
+    score = data.get('score')
+    block = data.get('block')
+    try:
+        db_handler.handle_db('update', 'web_leaderboard', data={"time": current_time, "uname": uname, "score": score, "block": block}, condition=f"WHERE uname = {uname}")
+        return jsonify({"status": "success"})
+    except Exception as e:
+        print(f"Leaderbaord Error: {e}")
+        return jsonify({"status": "failed"})
 
 @app.route("/api/generate_key", methods=["POST"])
 def generate_key():
@@ -132,7 +179,7 @@ def get_board():
     game = get_game()
     return jsonify(game.board)
 
-
+# Game get highscores
 @app.route("/api/score", methods=["GET"])
 def get_cur_score():
     global total_highscore, total_bestblock, total_highscore_txt, total_bestblock_txt
@@ -147,15 +194,13 @@ def get_cur_score():
         }
     )
 
-
+# Player reset game
 @app.route("/api/reset", methods=["POST"])
 def reset():
-    # game = get_game()
-    # game.reset()
     session["game"] = serialize_game(Game2048())
     return "Game resetted"
 
-
+# Player predict next move
 @app.route("/api/predict", methods=["GET"])
 def get_prediction():
     game = get_game()
@@ -184,7 +229,7 @@ def get_prediction():
 
     return jsonify(monte_predicted)
 
-
+# Player moves
 @app.route("/api/move/<int:direction>", methods=["POST"])
 def make_move(direction):
     global move_file, moves, total_highscore, total_bestblock, total_highscore_txt, total_bestblock_txt
@@ -221,7 +266,7 @@ def make_move(direction):
         add_move_to_json(move_file, board_list, direction)
 
         print_and_log(f">> ({get_current_time()}) Finished turn and saved turn.")
-        return jsonify({"board": board_list, "game_over": game_over})
+        return jsonify({"board": board_list, "game_over": game_over, "score": str(game.score), "block": str(game.bestblock)})
 
 
 @app.route("/api/moves", methods=["GET"])
