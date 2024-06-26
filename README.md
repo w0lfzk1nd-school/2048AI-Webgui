@@ -518,6 +518,6 @@ Im grossen und ganzen wurde das Potential von **AI** im Spiel *2048* bereits aus
 
 Jedoch finde ich es für mich selbst eine sehr tolle und interessante Aufgabe und Erfahrung, sich mit solch einem Thema auseinander zu setzen.
 
-Ebenso geht an dieser Stelle ein **riesen** Dankeschön an meine Ookami Chatbot Community, welche innerhalt von 3 Tagen fast 100'000 Spielzüge gespielt haben.
+Ebenso geht an dieser Stelle ein **riesen** Dankeschön an meine Ookami Chatbot Community, welche innerhalb von 3 Tagen fast 100'000 Spielzüge gespielt haben.
 
 *Dieses Projekt ist noch nicht abgeschlossen und wird daher in der Zukunft geupdatet werden.*
