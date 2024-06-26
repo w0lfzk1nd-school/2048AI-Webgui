@@ -8,7 +8,7 @@
 
 ## Temporäre Beispiel Seite:
 
-Persönliche Webseite: [2048.20lfzk1nd.com](https://2048.w0lfzk1nd.com)
+Persönliche Webseite: [2048.w0lfzk1nd.com](https://2048.w0lfzk1nd.com)
 
 ## Automatic DevContainer
 
