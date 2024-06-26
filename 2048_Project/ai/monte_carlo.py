@@ -7,7 +7,7 @@ from ai.environment import Environment
 from utils.utilities import print_and_log, log, get_current_time
 
 # Initialize environment and model
-env = Environment()
+#env = Environment()
 
 
 def print_board(board):

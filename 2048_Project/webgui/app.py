@@ -80,12 +80,10 @@ def get_highscore():
 
 def get_webgui_high():
     webgui_high = db_handler.handle_db('select', 'webgui')
-    print(f"WebGUI-DATA: {webgui_high}")
     return webgui_high
 
 def get_leaderboard():
-    web_leadboard = db_handler.handle_db('select', 'web_leaderboard')
-    print(f"LD-DATA = {web_leadboard}")
+    web_leadboard = db_handler.handle_db('select', 'web_leaderboard', None, "ORDER BY score DESC LIMIT 10")
     return web_leadboard
 
 def add_move_to_json(file_path, board, action):
@@ -125,13 +123,11 @@ def index():
 @app.route("/api/get_highscore", methods=["GET"])
 def handle_leaderboard():
     leaderboard_data = get_webgui_high()
-    print(f"WEB-DATA inc: {leaderboard_data}")
     return jsonify(leaderboard_data[0])
 
 @app.route("/api/get_leaderboard", methods=["GET"])
 def get_leader():
     leaderboard_data = get_leaderboard()
-    print(f"LD-DATA inc: {leaderboard_data}")
     return jsonify(leaderboard_data)
 
 @app.route('/api/add_highscore', methods=['POST'])
@@ -141,12 +137,28 @@ def add_highscore():
     uname = data.get('uname')
     score = data.get('score')
     block = data.get('block')
-    try:
-        db_handler.handle_db('insert', 'web_leaderboard', {"time": current_time, "uname": uname, "score": score, "block": block})
-        return jsonify({"status": "success"})
-    except Exception as e:
-        print(f"Leaderbaord Error: {e}")
-        return jsonify({"status": "failed"})
+    
+    # Check if the username already exists
+    existing_user = db_handler.handle_db('select', 'web_leaderboard', condition=f'uname = "{uname}"')
+    
+    if existing_user:
+        # Update the existing highscore
+        db_handler.handle_db(
+            'update', 
+            'web_leaderboard', 
+            data={"time": current_time, "score": score, "block": block}, 
+            condition=f'uname = "{uname}"'
+        )
+    else:
+        # Insert a new highscore
+        db_handler.handle_db(
+            'insert', 
+            'web_leaderboard', 
+            data={"time": current_time, "uname": uname, "score": score, "block": block}
+        )
+    
+    return jsonify({"status": "success"})
+
 
 @app.route('/api/update_highscore', methods=['POST'])
 def update_highscore():
@@ -156,7 +168,7 @@ def update_highscore():
     score = data.get('score')
     block = data.get('block')
     try:
-        db_handler.handle_db('update', 'web_leaderboard', data={"time": current_time, "uname": uname, "score": score, "block": block}, condition=f"WHERE uname = '{uname}'")
+        db_handler.handle_db('update', 'web_leaderboard', data={"time": current_time, "uname": uname, "score": score, "block": block}, condition=f'uname = "{uname}"')
         return jsonify({"status": "success"})
     except Exception as e:
         print(f"Leaderbaord Error: {e}")

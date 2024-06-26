@@ -35,13 +35,55 @@ function loadLeaderboard() {
         .then(data => {
             const leaderboardList = document.getElementById('leaderboard-list');
             leaderboardList.innerHTML = '';
-            console.log(data)
-            data.forEach(entry => {
-                const listItem = document.createElement('li');
-                const formattedTime = new Date(entry[1]).toLocaleString();
-                listItem.textContent = `${formattedTime} | ${entry[2]} | ${format_num(parseInt(entry[3]))} | ${format_num(parseInt(entry[4]))}`;
-                leaderboardList.appendChild(listItem);
+
+            // Create table and header
+            const table = document.createElement('table');
+            const header = table.createTHead();
+            const headerRow = header.insertRow(0);
+
+            const headers = [' Platz', ' Zeit', ' Name', ' Score', ' Block'];
+            headers.forEach((text, index) => {
+                const cell = headerRow.insertCell(index);
+                cell.textContent = text;
             });
+
+            // Create table body
+            const tbody = table.createTBody();
+
+            data.forEach((entry, index) => {
+                const row = tbody.insertRow();
+
+                // Add rank (index + 1 because array is 0-based)
+                const rankCell = row.insertCell(0);
+                rankCell.textContent = index + 1;
+                rankCell.style.padding = '8px';
+
+                // Format and add other cells
+                const timeCell = row.insertCell(1);
+                const formattedTime = new Date(entry[1]).toLocaleString();
+                timeCell.textContent = formattedTime;
+                timeCell.style.padding = '8px';
+
+                const nameCell = row.insertCell(2);
+                nameCell.textContent = entry[2];
+                nameCell.style.padding = '8px';
+
+                const scoreCell = row.insertCell(3);
+                scoreCell.textContent = format_num(parseInt(entry[3]));
+                scoreCell.style.padding = '8px';
+
+                const otherNumCell = row.insertCell(4);
+                otherNumCell.textContent = format_num(parseInt(entry[4]));
+                otherNumCell.style.padding = '8px';
+
+                // Add separator for each cell except the last one
+                for (let i = 0; i < row.cells.length - 1; i++) {
+                    row.cells[i].style.borderRight = '1px solid #ddd';
+                }
+            });
+
+            // Append table to the leaderboard list
+            leaderboardList.appendChild(table);
         })
         .catch(error => {
             console.error('Error loading leaderboard:', error);

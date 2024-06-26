@@ -97,7 +97,6 @@ class DatabaseHandler:
         query, values = self.build_query(action, table, data, condition)
         if query:
             result = self.execute_query(query, values)
-            print(result)
             return result
         else:
             print("Invalid query")
