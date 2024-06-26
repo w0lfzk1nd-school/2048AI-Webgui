@@ -71,9 +71,7 @@ function loadBoard() {
         .then(data => {
             const boardDiv = document.getElementById('board');
             boardDiv.innerHTML = '';
-
             let flattenedData = data.flat();
-
             let cellIndex = 0;
 
             for (let i = 0; i < 4; i++) {
