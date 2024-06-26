@@ -6,6 +6,10 @@
 
 ![WebGui Leaderboard](2048ai_webgui_leaderboard.PNG "WebGui Leaderboard")
 
+## Temporäre Beispiel Seite:
+
+Persönliche Webseite: [2048.20lfzk1nd.com](https://2048.w0lfzk1nd.com)
+
 ## Automatic DevContainer
 
 **Open in Codespaces**
