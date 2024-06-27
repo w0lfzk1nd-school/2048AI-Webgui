@@ -30,8 +30,8 @@ setup_logging("flask")
 # Erstellen einer Instanz der DatabaseHandler-Klasse
 db_handler = DatabaseHandler()
 
-webgui_db = db_handler.handle_db('select', 'webgui')
-webgui_leaderboard = db_handler.handle_db('select', 'web_leaderboard')
+webgui_db = db_handler.handle_db("select", "webgui")
+webgui_leaderboard = db_handler.handle_db("select", "web_leaderboard")
 
 app.secret_key = os.urandom(24)
 moves = []
@@ -45,6 +45,7 @@ total_bestblock = webgui_db[0][3]
 total_highscore_txt = webgui_db[0][2]
 total_bestblock_txt = webgui_db[0][4]
 highscore_lock = Lock()
+
 
 # Helper functions for serializing and deserializing the game state
 def serialize_game(game):
@@ -79,12 +80,16 @@ def get_highscore():
 
 
 def get_webgui_high():
-    webgui_high = db_handler.handle_db('select', 'webgui')
+    webgui_high = db_handler.handle_db("select", "webgui")
     return webgui_high
 
+
 def get_leaderboard():
-    web_leadboard = db_handler.handle_db('select', 'web_leaderboard', None, "ORDER BY score DESC LIMIT 10")
+    web_leadboard = db_handler.handle_db(
+        "select", "web_leaderboard", None, "ORDER BY score DESC LIMIT 10"
+    )
     return web_leadboard
+
 
 def add_move_to_json(file_path, board, action):
     try:
@@ -112,6 +117,17 @@ def monte_predict_wrapper(board, steps, output_queue):
     output_queue.put(result)
 
 
+def remove_lowest_score():
+    lowest_score_entry = db_handler.handle_db(
+        "select", "web_leaderboard", condition="ORDER BY score ASC LIMIT 1"
+    )
+    if lowest_score_entry:
+        lowest_score_id = lowest_score_entry[0][0]
+        db_handler.handle_db(
+            "delete", "web_leaderboard", condition=f"id = {lowest_score_id}"
+        )
+
+
 # === App Routes
 
 
@@ -124,7 +140,12 @@ def index():
 def handle_leaderboard():
     highscore_data = get_webgui_high()
     leaderboard = get_leaderboard()
-    return jsonify({"current_highscore": highscore_data[0], "lowest_top10_score": leaderboard[-1][3] if leaderboard else 0})
+    return jsonify(
+        {
+            "current_highscore": highscore_data[0],
+            "lowest_top10_score": leaderboard[-1][3] if leaderboard else 0,
+        }
+    )
 
 
 @app.route("/api/get_leaderboard", methods=["GET"])
@@ -132,33 +153,43 @@ def get_leader():
     leaderboard_data = get_leaderboard()
     return jsonify(leaderboard_data)
 
-@app.route('/api/add_highscore', methods=['POST'])
+
+@app.route("/api/add_highscore", methods=["POST"])
 def add_highscore():
     data = request.get_json()
-    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    uname = data.get('uname')
-    score = data.get('score')
-    block = data.get('block')
-    
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    uname = data.get("uname")
+    score = data.get("score")
+    block = data.get("block")
+
     # Check the current top 10 scores
     leaderboard = get_leaderboard()
-    if len(leaderboard) < 10 or score > leaderboard[-1]['score']:
+    print(leaderboard[-1][3])
+    if len(leaderboard) < 10 or int(score) > int(leaderboard[-1][3]):
 
-        existing_user = db_handler.handle_db('select', 'web_leaderboard', condition=f'uname = "{uname}"')
+        existing_user = db_handler.handle_db(
+            "select", "web_leaderboard", condition=f'uname = "{uname}"'
+        )
         if existing_user:
             # Update the existing highscore
             db_handler.handle_db(
-                'update', 
-                'web_leaderboard', 
-                data={"time": current_time, "score": score, "block": block}, 
-                condition=f'uname = "{uname}"'
+                "update",
+                "web_leaderboard",
+                data={"time": current_time, "score": score, "block": block},
+                condition=f'uname = "{uname}"',
             )
         else:
+            remove_lowest_score()
             # Insert a new highscore
             db_handler.handle_db(
-                'insert', 
-                'web_leaderboard', 
-                data={"time": current_time, "uname": uname, "score": score, "block": block}
+                "insert",
+                "web_leaderboard",
+                data={
+                    "time": current_time,
+                    "uname": uname,
+                    "score": score,
+                    "block": block,
+                },
             )
 
         leaderboard = get_leaderboard()
@@ -168,20 +199,25 @@ def add_highscore():
         return jsonify({"status": "not_in_top_10"})
 
 
-
-@app.route('/api/update_highscore', methods=['POST'])
+@app.route("/api/update_highscore", methods=["POST"])
 def update_highscore():
     data = request.get_json()
-    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    uname = data.get('uname')
-    score = data.get('score')
-    block = data.get('block')
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    uname = data.get("uname")
+    score = data.get("score")
+    block = data.get("block")
     try:
-        db_handler.handle_db('update', 'web_leaderboard', data={"time": current_time, "uname": uname, "score": score, "block": block}, condition=f'uname = "{uname}"')
+        db_handler.handle_db(
+            "update",
+            "web_leaderboard",
+            data={"time": current_time, "uname": uname, "score": score, "block": block},
+            condition=f'uname = "{uname}"',
+        )
         return jsonify({"status": "success"})
     except Exception as e:
         print(f"Leaderbaord Error: {e}")
         return jsonify({"status": "failed"})
+
 
 @app.route("/api/generate_key", methods=["POST"])
 def generate_key():
@@ -206,6 +242,7 @@ def get_board():
     game = get_game()
     return jsonify(game.board)
 
+
 # Game get highscores
 @app.route("/api/score", methods=["GET"])
 def get_cur_score():
@@ -221,11 +258,13 @@ def get_cur_score():
         }
     )
 
+
 # Player reset game
 @app.route("/api/reset", methods=["POST"])
 def reset():
     session["game"] = serialize_game(Game2048())
     return "Game resetted"
+
 
 # Player predict next move
 @app.route("/api/predict", methods=["GET"])
@@ -242,7 +281,7 @@ def get_prediction():
     p = Process(target=monte_predict_wrapper, args=(game.board, steps, output_queue))
     p.start()
     p.join()
-    
+
     monte_predicted = output_queue.get()
 
     if isinstance(monte_predicted["scores"], np.ndarray):
@@ -256,6 +295,7 @@ def get_prediction():
 
     return jsonify(monte_predicted)
 
+
 # Player moves
 @app.route("/api/move/<int:direction>", methods=["POST"])
 def make_move(direction):
@@ -268,15 +308,15 @@ def make_move(direction):
     if game.score > total_highscore:
         total_highscore = game.score
         total_highscore_txt = f"[ {game.score} ] @{get_cute_time()}"
-        db_handler.handle_db("update", "webgui", {'highscore_txt': total_highscore_txt})
-        db_handler.handle_db("update", "webgui", {'highscore': game.score})
+        db_handler.handle_db("update", "webgui", {"highscore_txt": total_highscore_txt})
+        db_handler.handle_db("update", "webgui", {"highscore": game.score})
 
     if game.bestblock > total_bestblock:
         total_bestblock = game.bestblock
         total_bestblock_txt = f"[ {game.bestblock} ] @{get_cute_time()}"
-        db_handler.handle_db("update", "webgui", {'highblock_txt': total_highscore_txt})
-        db_handler.handle_db("update", "webgui", {'highblock': game.bestblock})
-        
+        db_handler.handle_db("update", "webgui", {"highblock_txt": total_highscore_txt})
+        db_handler.handle_db("update", "webgui", {"highblock": game.bestblock})
+
     if isinstance(current_board, np.ndarray):
         board_list = current_board.tolist()
     else:
@@ -286,14 +326,23 @@ def make_move(direction):
         ]
     if not np.array_equal(old_board, game.board):
         moves.append([board_list, direction])
-        db_handler.handle_db("update", "webgui", {'steps_played': int(len(moves) + webgui_db[0][0])})
+        db_handler.handle_db(
+            "update", "webgui", {"steps_played": int(len(moves) + webgui_db[0][0])}
+        )
         if move_file == "":
             move_file = f"datasets/side_session_moves.json"
 
         add_move_to_json(move_file, board_list, direction)
 
         print_and_log(f">> ({get_current_time()}) Finished turn and saved turn.")
-        return jsonify({"board": board_list, "game_over": game_over, "score": str(game.score), "block": str(game.bestblock)})
+        return jsonify(
+            {
+                "board": board_list,
+                "game_over": game_over,
+                "score": str(game.score),
+                "block": str(game.bestblock),
+            }
+        )
 
 
 @app.route("/api/moves", methods=["GET"])
