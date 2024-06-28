@@ -271,6 +271,7 @@ def get_cur_score():
 # Player reset game
 @app.route("/api/reset", methods=["POST"])
 def reset():
+    reset_db_conn()
     session["game"] = serialize_game(Game2048())
     return "Game resetted"
 
