@@ -4,7 +4,7 @@ import os
 
 class DatabaseHandler:
     def __init__(self):
-        self.host = os.getenv('MYSQL_HOST', 'localhost')
+        self.host = os.getenv('MYSQL_HOST', 'mysql')
         self.user = os.getenv('MYSQL_USER', 'master')
         self.password = os.getenv('MYSQL_PASSWORD', 'yourpassword')
         self.database = os.getenv('MYSQL_DATABASE', '2048AI')
@@ -35,6 +35,7 @@ class DatabaseHandler:
 
     def execute_query(self, query, values=None):
         """Führt einen SQL-Befehl aus."""
+        cursor = None
         try:
             cursor = self.connection.cursor()
 
