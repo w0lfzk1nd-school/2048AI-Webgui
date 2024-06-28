@@ -41,7 +41,7 @@ function loadLeaderboard() {
             const header = table.createTHead();
             const headerRow = header.insertRow(0);
 
-            const headers = [' Platz', ' Zeit', ' Name', ' Score', ' Block'];
+            const headers = [' #', ' Time', ' Name', ' Score', ' Block'];
             headers.forEach((text, index) => {
                 const cell = headerRow.insertCell(index);
                 cell.textContent = text;
@@ -246,8 +246,8 @@ function checkHighscore(score, block) {
     fetch('/api/get_highscore')
         .then(response => response.json())
         .then(highscoreData => {
-            const lowestTop10Score = highscoreData.lowest_top10_score;
-            if (score > lowestTop10Score) {
+            const lowestTop20Score = highscoreData.lowest_top20_score;
+            if (score > lowestTop20Score) {
                 if (!currentHighscoreSet) {
                     const uname = prompt("Congratulations! You set a new highscore! Please enter your username:");
                     if (uname && uname.length <= 20) {

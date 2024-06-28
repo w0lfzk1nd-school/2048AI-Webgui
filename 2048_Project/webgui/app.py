@@ -86,7 +86,7 @@ def get_webgui_high():
 
 def get_leaderboard():
     web_leadboard = db_handler.handle_db(
-        "select", "web_leaderboard", None, "ORDER BY score DESC LIMIT 10"
+        "select", "web_leaderboard", None, "ORDER BY score DESC LIMIT 20"
     )
     return web_leadboard
 
@@ -143,7 +143,7 @@ def handle_leaderboard():
     return jsonify(
         {
             "current_highscore": highscore_data[0],
-            "lowest_top10_score": leaderboard[-1][3] if leaderboard else 0,
+            "lowest_top20_score": leaderboard[-1][3] if leaderboard else 0,
         }
     )
 
@@ -165,7 +165,7 @@ def add_highscore():
     # Check the current top 10 scores
     leaderboard = get_leaderboard()
     print(leaderboard[-1][3])
-    if len(leaderboard) < 10 or int(score) > int(leaderboard[-1][3]):
+    if len(leaderboard) < 20 or int(score) > int(leaderboard[-1][3]):
 
         existing_user = db_handler.handle_db(
             "select", "web_leaderboard", condition=f'uname = "{uname}"'
@@ -179,7 +179,8 @@ def add_highscore():
                 condition=f'uname = "{uname}"',
             )
         else:
-            remove_lowest_score()
+            if len(leaderboard) == 20:
+                remove_lowest_score()
             # Insert a new highscore
             db_handler.handle_db(
                 "insert",
@@ -196,7 +197,7 @@ def add_highscore():
 
         return jsonify({"status": "success"})
     else:
-        return jsonify({"status": "not_in_top_10"})
+        return jsonify({"status": "not_in_top_20"})
 
 
 @app.route("/api/update_highscore", methods=["POST"])
