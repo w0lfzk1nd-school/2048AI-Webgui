@@ -10,8 +10,10 @@ services:
     volumes:
       - workspace_volume:/workspace
       - ../2048_Project/webgui/datasets:/workspace/2048_Project/webgui/datasets # Mounte Ordner für WebGUI Datasets
+      - ../2048_Project/webgui/logs:/workspace/2048_Project/webgui/logs # Mounte Ordner für WebGUI Logs
       - ../2048_Project/webgui/datasets:/workspace/2048_Project/datasets # Mounte Ordner für Datasets
       - ../2048_Project/webgui/datasets:/workspace/2048_Project/saves # Mounte Ordner für Modelle
+      - ../2048_Project/webgui/logs:/workspace/2048_Project/logs # Mounte Ordner für Main logs
       - ..:/workspace/Local # Erlaubt editieren des Projektes ausserhalb des Dockers
     ports:
       - 8282:8282
