@@ -4,3 +4,5 @@ logs/*
 */.env
 2048_Project/webgui/datasets/*.json
 .devcontainer/.env
+2048_Project/webgui/logs/*.txt
+2048_Project/logs/*.txt
