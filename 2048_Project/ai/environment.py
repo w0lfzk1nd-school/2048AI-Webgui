@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 from utils.utilities import print_and_log, form_time, log, gen_key
 from game.game_engine import Game2048
@@ -108,7 +109,8 @@ class Environment:
     def render(self, scores, traintime):
         highscore = scores["high"]
         bestscore = scores["best"]
-        console_output = f"\nTraining-Time: {form_time(traintime)}\nMove: {self.game_steps} | Score: {self.game.score} | Highscore: {highscore} | BestBlock: {bestscore}\nBoard:\n"
+        console_output = f"\033[H\033[J"  # Clear screen and move cursor to the top
+        console_output += f"\nTraining-Time: {form_time(traintime)}\nMove: {self.game_steps} | Score: {self.game.score} | Highscore: {highscore} | BestBlock: {bestscore}\nBoard:\n"
         for row in self.game.board:
             console_output += f"{' | '.join(str(num).ljust(4) for num in row)}\n"
             console_output += f"{'-' * 25}\n"
@@ -124,7 +126,29 @@ class Environment:
         extended_info += f", AvgReward: {sum(self.total_rewards) / tot_games:.2f}, Avg.Points: {sum(self.total_scores) / tot_games:.2f}\n"
         extended_info += f"Total Games: {self.total_games}, Total Steps: {self.total_steps}\n==================================================\n"
 
-        print_and_log(console_output + extended_info)
+        sys.stdout.write(console_output + extended_info)
+        sys.stdout.flush()
+
+#    def render(self, scores, traintime):
+#        highscore = scores["high"]
+#        bestscore = scores["best"]
+#        console_output = f"\nTraining-Time: {form_time(traintime)}\nMove: {self.game_steps} | Score: {self.game.score} | Highscore: {highscore} | BestBlock: {bestscore}\nBoard:\n"
+#        for row in self.game.board:
+#            console_output += f"{' | '.join(str(num).ljust(4) for num in row)}\n"
+#            console_output += f"{'-' * 25}\n"
+#
+#        # Ergänzende Informationen, die auch ins Log sollen
+#        extended_info = (
+#            f"Last Action: {self.last_action}, Last Reward: {self.last_reward}"
+#        )
+#        if self.total_games == 0:
+#            tot_games = 1
+#        else:
+#            tot_games = self.total_games
+#        extended_info += f", AvgReward: {sum(self.total_rewards) / tot_games:.2f}, Avg.Points: {sum(self.total_scores) / tot_games:.2f}\n"
+#        extended_info += f"Total Games: {self.total_games}, Total Steps: {self.total_steps}\n==================================================\n"
+#
+#        print_and_log(console_output + extended_info)
 
     def plot_history(self):
         plt.figure(figsize=(10, 12))
