@@ -128,6 +128,13 @@ def remove_lowest_score():
         )
 
 
+def reset_db_conn():
+    try:
+        db_handler.close_connection()
+        db_handler = DatabaseHandler()
+    except:
+        db_handler = DatabaseHandler()
+
 # === App Routes
 
 
@@ -140,6 +147,7 @@ def index():
 def handle_leaderboard():
     highscore_data = get_webgui_high()
     leaderboard = get_leaderboard()
+    print_and_log(highscore_data, leaderboard)
     return jsonify(
         {
             "current_highscore": highscore_data[0],
@@ -301,6 +309,7 @@ def get_prediction():
 @app.route("/api/move/<int:direction>", methods=["POST"])
 def make_move(direction):
     global move_file, moves, total_highscore, total_bestblock, total_highscore_txt, total_bestblock_txt
+    reset_db_conn()
     game = get_game()
     old_board = session["game"]["board"]
     game_over = game.move(direction)
