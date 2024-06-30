@@ -8,36 +8,33 @@ class DatabaseHandler:
         self.user = os.getenv('MYSQL_USER', 'master')
         self.password = os.getenv('MYSQL_PASSWORD', 'yourpassword')
         self.database = os.getenv('MYSQL_DATABASE', '2048AI')
-        self.connection = None
-        self.connect()
 
     def connect(self):
         """Stellt eine Verbindung zur MySQL-Datenbank her."""
         try:
-            self.connection = mysql.connector.connect(
+            connection = mysql.connector.connect(
                 host=self.host,
                 user=self.user,
                 password=self.password,
                 database=self.database
             )
-            if self.connection.is_connected():
-                print("Connected to MySQL database")
+            #if connection.is_connected():
+            #    print("Connected to MySQL database")
+            return connection
 
         except Error as e:
-            print("Error connecting to MySQL:", e)
-            self.connection = None
-
-    def close_connection(self):
-        """Schließt die MySQL-Verbindung."""
-        if self.connection and self.connection.is_connected():
-            self.connection.close()
-            print("MySQL connection closed")
+            print("[Connecting] Error connecting to MySQL:", e)
+            return None
 
     def execute_query(self, query, values=None):
         """Führt einen SQL-Befehl aus."""
+        connection = self.connect()
+        if connection is None:
+            return None
+
         cursor = None
         try:
-            cursor = self.connection.cursor()
+            cursor = connection.cursor()
 
             if values:
                 cursor.execute(query, values)
@@ -48,16 +45,20 @@ class DatabaseHandler:
                 result = cursor.fetchall()
                 return result
 
-            self.connection.commit()
+            connection.commit()
             print(f"Query executed successfully: {query}")
 
         except Error as e:
+            print(f">> [self.connection] is {connection}")
             print("Error executing query:", e)
             return None
 
         finally:
             if cursor is not None:
                 cursor.close()
+            if connection.is_connected():
+                connection.close()
+                #print("MySQL connection closed")
 
     def build_query(self, action, table, data=None, condition=None):
         """Baut einen SQL-Query basierend auf der Aktion."""
@@ -105,13 +106,7 @@ class DatabaseHandler:
 
 # Beispiel zur Nutzung der Klasse
 if __name__ == "__main__":
-    # MySQL Verbindungsinformationen
-    MYSQL_HOST = os.getenv('MYSQL_HOST', 'localhost')
-    MYSQL_USER = os.getenv('MYSQL_USER', 'master')
-    MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', 'yourpassword')
-    MYSQL_DATABASE = os.getenv('MYSQL_DATABASE', '2048AI')
-
-    db_handler = DatabaseHandler(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE)
+    db_handler = DatabaseHandler()
 
     # Beispiel für INSERT in die memory-Tabelle
     memory_data = {
@@ -135,6 +130,3 @@ if __name__ == "__main__":
 
     # Beispiel für DELETE aus der memory-Tabelle
     db_handler.handle_db("delete", "memory", condition="step=1")
-
-    # Verbindung schließen
-    db_handler.close_connection()

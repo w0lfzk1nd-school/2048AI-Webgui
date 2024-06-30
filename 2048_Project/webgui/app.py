@@ -172,7 +172,6 @@ def add_highscore():
 
     # Check the current top 10 scores
     leaderboard = get_leaderboard()
-    print(leaderboard[-1][3])
     if len(leaderboard) < 20 or int(score) > int(leaderboard[-1][3]):
 
         existing_user = db_handler.handle_db(
@@ -310,7 +309,6 @@ def get_prediction():
 @app.route("/api/move/<int:direction>", methods=["POST"])
 def make_move(direction):
     global move_file, moves, total_highscore, total_bestblock, total_highscore_txt, total_bestblock_txt
-    reset_db_conn()
     game = get_game()
     old_board = session["game"]["board"]
     game_over = game.move(direction)
