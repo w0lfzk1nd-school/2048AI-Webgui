@@ -2,6 +2,7 @@ let isPredicting = false;
 let win_confirm = false;
 let game_over = false;
 let currentHighscoreSet = false;
+let alert_no_scoreupd = false
 let currentUsername = '';
 
 function genPredictionTxt() {
@@ -218,26 +219,27 @@ function makeMove(direction) {
             loadScore();
             loadBoard();
             loadMovesCount();
-            //loadLeaderboard()
-            const autoPredictCheckbox = document.getElementById('auto-predict');
-            if (autoPredictCheckbox && autoPredictCheckbox.checked && !data.game_over) {
-                setTimeout(() => {
-                    predictMove();
-                }, 3000);
-            } else if (data.game_over) {
-                predictDont.textContent = `-- Game Over --`;
-            }
+            if (data.status == true) { // Fixed 'no valid response' for make_move()
+                const autoPredictCheckbox = document.getElementById('auto-predict');
+                if (autoPredictCheckbox && autoPredictCheckbox.checked && !data.game_over) {
+                    setTimeout(() => {
+                        predictMove();
+                    }, 3000);
+                } else if (data.game_over) {
+                    predictDont.textContent = `-- Game Over --`;
+                }
 
-            if (data.best_block == 2048 && !win_confirm) {
-                alert("Congrats! You won!\n\nYou have reached a block of 2048. Well done! :)");
-                win_confirm = true;
-            }
+                if (data.best_block == 2048 && !win_confirm) {
+                    alert("Congrats! You won!\n\nYou have reached a block of 2048. Well done! :)");
+                    win_confirm = true;
+                }
 
-            if (data.game_over) {
-                game_over = true
-                alert("Game Over!");
-            } else {
-                checkHighscore(data.score, data.block)
+                if (data.game_over) {
+                    game_over = true
+                    alert("Game Over!");
+                } else {
+                    checkHighscore(data.score, data.block)
+                }
             }
         });
 }
@@ -247,17 +249,37 @@ function checkHighscore(score, block) {
         .then(response => response.json())
         .then(highscoreData => {
             const lowestTop20Score = highscoreData.lowest_top20_score;
+            const current_high = highscoreData.current_highscore;
+            const top20entries = highscoreData.full_leaderboard; // Added checking existing usernames and insert/update accordingly
+
+            // Allowing Users to re-enter a username
+
             if (score > lowestTop20Score) {
-                if (!currentHighscoreSet) {
-                    const uname = prompt("Congratulations! You set a new highscore! Please enter your username:");
-                    if (uname && uname.length <= 20) {
-                        currentUsername = uname;
-                        currentHighscoreSet = true;
-                        saveHighscore(currentUsername, score, block);
+                let uname
+                if (currentUsername == '') {
+                    uname = prompt("Your score got a place on our leaderboard!\n(You can re-enter a username)\n\nPlease enter your username:");
+                } else {
+                    uname = currentUsername
+                }
+
+                if (uname && uname.length <= 20) {
+                    currentUsername = uname
+                    const existingEntry = top20entries.find(entry => entry[2] === uname);
+
+                    if (existingEntry) {
+                        const existingHighscore = existingEntry[3];
+
+                        if (score > existingHighscore) {
+                            updateHighscore(uname, score, block);
+                            if (!currentHighscoreSet) { alert("Congratulations! :D\nYou reached a new Highscore!\nYour highscore has been updated!"); currentHighscoreSet = true }
+                        } else {
+                            if (!alert_no_scoreupd) { alert("Your current score is lower than your existing highscore. It will not be updated."); alert_no_scoreupd = true }
+                        }
+
+                    } else {
+                        saveHighscore(uname, score, block);
                         alert("Your highscore has been saved!");
                     }
-                } else {
-                    updateHighscore(currentUsername, score, block);
                 }
             }
         });
@@ -270,7 +292,7 @@ function saveHighscore(uname, score, block) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({uname: uname, score: score, block: block })
+        body: JSON.stringify({ uname: uname, score: score, block: block })
     })
         .then(response => {
             if (!response.ok) {

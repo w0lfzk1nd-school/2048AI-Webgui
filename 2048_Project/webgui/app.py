@@ -147,11 +147,11 @@ def index():
 def handle_leaderboard():
     highscore_data = get_webgui_high()
     leaderboard = get_leaderboard()
-    print_and_log(highscore_data, leaderboard)
     return jsonify(
         {
             "current_highscore": highscore_data[0],
             "lowest_top20_score": leaderboard[-1][3] if leaderboard else 0,
+            "full_leaderboard": leaderboard
         }
     )
 
@@ -346,12 +346,15 @@ def make_move(direction):
         print_and_log(f">> ({get_current_time()}) Finished turn and saved turn.")
         return jsonify(
             {
+                "status" : True,
                 "board": board_list,
                 "game_over": game_over,
                 "score": str(game.score),
                 "block": str(game.bestblock),
             }
         )
+    else:
+        return jsonify({"status": False})
 
 
 @app.route("/api/moves", methods=["GET"])
